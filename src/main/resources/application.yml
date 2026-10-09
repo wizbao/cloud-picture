@@ -1,0 +1,19 @@
+# 应用服务 WEB 访问端口
+server:
+  port: 8123
+  servlet:
+    context-path: /api
+spring:
+  application:
+    name: cloud-picture-backend
+  # 数据库配置
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://rm-cn-rap4ztia30002xuo.rwlb.cn-guangzhou.rds.aliyuncs.com:3306
+    username: root
+    password: Wb123456!
+  # 使用本地配置
+  profiles:
+    active: local
+
+
