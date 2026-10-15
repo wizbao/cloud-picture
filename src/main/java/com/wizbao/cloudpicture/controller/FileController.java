@@ -1,6 +1,5 @@
 package com.wizbao.cloudpicture.controller;
 
-import com.qcloud.cos.model.COSObject;
 import com.qcloud.cos.model.COSObjectInputStream;
 import com.qcloud.cos.utils.IOUtils;
 import com.wizbao.cloudpicture.annotation.AuthCheck;
@@ -10,6 +9,8 @@ import com.wizbao.cloudpicture.constant.UserConstant;
 import com.wizbao.cloudpicture.exception.BusinessException;
 import com.wizbao.cloudpicture.exception.ErrorCode;
 import com.wizbao.cloudpicture.manager.CosManager;
+import com.wizbao.cloudpicture.service.PictureService;
+import com.wizbao.cloudpicture.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -21,11 +22,15 @@ import java.io.IOException;
 
 @Slf4j
 @RestController
-@RequestMapping("/")
+@RequestMapping("/file")
 public class FileController {
 
     @Resource
     private CosManager cosManager;
+    @Resource
+    private UserService userService;
+    @Resource
+    private PictureService pictureService;
 
     /**
      * 测试文件上传

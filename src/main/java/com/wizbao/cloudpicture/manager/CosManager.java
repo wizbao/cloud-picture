@@ -5,18 +5,16 @@ import com.qcloud.cos.COSClient;
 import com.qcloud.cos.exception.CosClientException;
 import com.qcloud.cos.exception.CosServiceException;
 import com.qcloud.cos.model.*;
+import com.qcloud.cos.model.ciModel.persistence.PicOperations;
 import com.qcloud.cos.transfer.TransferManager;
 import com.qcloud.cos.transfer.TransferManagerConfiguration;
 import com.qcloud.cos.transfer.Upload;
-import com.qcloud.cos.utils.IOUtils;
 import com.wizbao.cloudpicture.config.CosClientConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
 
 
 @Slf4j
@@ -65,6 +63,13 @@ public class CosManager {
 //         objectMetadata.setUserMetadata(userMeta);
 
         putObjectRequest.withMetadata(objectMetadata);
+
+        // 图片处理
+        PicOperations picOperations = new PicOperations();
+        // 是否返回原图信息，0不返回原图信息，1返回原图信息，默认为0
+        picOperations.setIsPicInfo(1);
+        putObjectRequest.setPicOperations(picOperations);
+
         UploadResult uploadResult = null;
         try {
             // 高级接口会返回一个异步结果Upload
