@@ -11,6 +11,9 @@ import com.wizbao.cloudpicture.exception.ErrorCode;
 import com.wizbao.cloudpicture.manager.CosManager;
 import com.wizbao.cloudpicture.service.PictureService;
 import com.wizbao.cloudpicture.service.UserService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -23,6 +26,7 @@ import java.io.IOException;
 @Slf4j
 @RestController
 @RequestMapping("/file")
+@Api(tags = "文件接口")
 public class FileController {
 
     @Resource
@@ -40,7 +44,8 @@ public class FileController {
      */
     @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
     @PostMapping("/test/upload")
-    public BaseResponse<String> testUploadFile(@RequestPart("file") MultipartFile multipartFile) {
+    @ApiOperation(value = "测试文件上传")
+    public BaseResponse<String> testUploadFile(@ApiParam("文件") @RequestPart("file") MultipartFile multipartFile) {
         // 文件目录
         String filename = multipartFile.getOriginalFilename();
         String filepath = String.format("/test/%s", filename);
@@ -74,7 +79,8 @@ public class FileController {
      */
     @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
     @GetMapping("/test/download/")
-    public void testDownloadFile(String filepath, HttpServletResponse response) throws IOException {
+    @ApiOperation(value = "测试文件下载")
+    public void testDownloadFile(@ApiParam("文件路径") String filepath, HttpServletResponse response) throws IOException {
         COSObjectInputStream cosObjectInput = null;
         try {
             cosObjectInput = cosManager.downloadFile(filepath);

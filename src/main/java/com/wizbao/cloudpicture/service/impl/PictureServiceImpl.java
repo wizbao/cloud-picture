@@ -45,6 +45,14 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture>
     private UserService userService;
 
 
+    /**
+     * 上传图片，支持新增和更新
+     *
+     * @param multipartFile        图片文件
+     * @param pictureUploadRequest 图片上传请求
+     * @param loginUser            登录用户
+     * @return 图片封装
+     */
     @Override
     public PictureVO uploadPicture(MultipartFile multipartFile, PictureUploadRequest pictureUploadRequest, User loginUser) {
         ThrowUtils.throwIf(loginUser == null, ErrorCode.NO_AUTH_ERROR);
@@ -91,6 +99,12 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture>
         return PictureVO.objToVo(picture);
     }
 
+    /**
+     * 根据查询请求构造图片查询条件
+     *
+     * @param pictureQueryRequest 图片查询请求
+     * @return 查询条件
+     */
     @Override
     public QueryWrapper<Picture> getQueryWrapper(PictureQueryRequest pictureQueryRequest) {
         QueryWrapper<Picture> queryWrapper = new QueryWrapper<Picture>();
@@ -148,6 +162,13 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture>
         return queryWrapper;
     }
 
+    /**
+     * 获取图片封装，并关联用户信息
+     *
+     * @param picture 图片
+     * @param request 请求
+     * @return 图片封装
+     */
     @Override
     public PictureVO getPictureVO(Picture picture, HttpServletRequest request) {
         // 对象转封装类
@@ -192,6 +213,11 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture>
         return pictureVOPage;
     }
 
+    /**
+     * 校验图片参数
+     *
+     * @param picture 图片
+     */
     @Override
     public void validPicture(Picture picture) {
         ThrowUtils.throwIf(picture == null, ErrorCode.PARAMS_ERROR);
@@ -209,6 +235,12 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture>
         }
     }
 
+    /**
+     * 审核图片
+     *
+     * @param pictureReviewRequest 审核请求
+     * @param loginUser            登录用户
+     */
     @Override
     public void doPictureReview(PictureReviewRequest pictureReviewRequest, User loginUser) {
         Long id = pictureReviewRequest.getId();
@@ -233,6 +265,12 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture>
         ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR);
     }
 
+    /**
+     * 填充审核参数。管理员自动过审，普通用户改为待审核
+     *
+     * @param picture   图片
+     * @param loginUser 登录用户
+     */
     @Override
     public void fillReviewParams(Picture picture, User loginUser) {
         if (userService.isAdmin(loginUser)) {

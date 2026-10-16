@@ -29,12 +29,37 @@ public interface PictureService extends IService<Picture> {
                             User loginUser);
 
 
+    /**
+     * 获取图片查询条件
+     *
+     * @param pictureQueryRequest 图片查询请求
+     * @return 查询条件
+     */
     QueryWrapper<Picture> getQueryWrapper(PictureQueryRequest pictureQueryRequest);
 
+    /**
+     * 获取图片封装
+     *
+     * @param picture 图片
+     * @param request 请求
+     * @return 图片封装
+     */
     PictureVO getPictureVO(Picture picture, HttpServletRequest request);
 
+    /**
+     * 分页获取图片封装
+     *
+     * @param picturePage 图片分页
+     * @param request 请求
+     * @return 图片封装分页
+     */
     Page<PictureVO> getPictureVOPage(Page<Picture> picturePage, HttpServletRequest request);
 
+    /**
+     * 校验图片
+     *
+     * @param picture 图片
+     */
     void validPicture(Picture picture);
 
     /**
@@ -45,5 +70,11 @@ public interface PictureService extends IService<Picture> {
      */
     void doPictureReview(PictureReviewRequest pictureReviewRequest, User loginUser);
 
+    /**
+     * 填充审核参数
+     *
+     * @param picture   图片
+     * @param loginUser 登录用户
+     */
     void fillReviewParams(Picture picture, User loginUser);
 }

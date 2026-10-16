@@ -17,6 +17,9 @@ import com.wizbao.cloudpicture.model.enums.PictureReviewStatusEnum;
 import com.wizbao.cloudpicture.model.vo.PictureVO;
 import com.wizbao.cloudpicture.service.PictureService;
 import com.wizbao.cloudpicture.service.UserService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
@@ -31,6 +34,7 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping("/picture")
+@Api(tags = "图片接口")
 public class PictureController {
 
     @Resource
@@ -42,8 +46,9 @@ public class PictureController {
      * 上传图片（可重新上传）
      */
     @PostMapping("/upload")
+    @ApiOperation(value = "上传图片（可重新上传）")
     public BaseResponse<PictureVO> uploadPicture(
-            @RequestPart("file") MultipartFile multipartFile,
+            @ApiParam("图片文件") @RequestPart("file") MultipartFile multipartFile,
             PictureUploadRequest pictureUploadRequest,
             HttpServletRequest request) {
         User loginUser = userService.getLoginUser(request);
@@ -55,6 +60,7 @@ public class PictureController {
      * 删除图片
      */
     @PostMapping("/delete")
+    @ApiOperation(value = "删除图片")
     public BaseResponse<Boolean> deletePicture(@RequestBody DeleteRequest deleteRequest, HttpServletRequest request) {
         if (deleteRequest == null || deleteRequest.getId() <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
@@ -78,6 +84,7 @@ public class PictureController {
      * 更新图片（仅管理员可用）
      */
     @PostMapping("/update")
+    @ApiOperation(value = "更新图片（仅管理员可用）")
     @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
     public BaseResponse<Boolean> updatePicture(@RequestBody PictureUpdateRequest pictureUpdateRequest,HttpServletRequest request) {
         if (pictureUpdateRequest == null || pictureUpdateRequest.getId() <= 0) {
@@ -110,8 +117,9 @@ public class PictureController {
      * 根据 id 获取图片（仅管理员可用）
      */
     @GetMapping("/get")
+    @ApiOperation(value = "根据 id 获取图片（仅管理员可用）")
     @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
-    public BaseResponse<Picture> getPictureById(long id, HttpServletRequest request) {
+    public BaseResponse<Picture> getPictureById(@ApiParam("图片 id") long id, HttpServletRequest request) {
         ThrowUtils.throwIf(id <= 0, ErrorCode.PARAMS_ERROR);
         // 查询数据库
         Picture picture = pictureService.getById(id);
@@ -124,7 +132,8 @@ public class PictureController {
      * 根据 id 获取图片（封装类）
      */
     @GetMapping("/get/vo")
-    public BaseResponse<PictureVO> getPictureVOById(long id, HttpServletRequest request) {
+    @ApiOperation(value = "根据 id 获取图片（封装类）")
+    public BaseResponse<PictureVO> getPictureVOById(@ApiParam("图片 id") long id, HttpServletRequest request) {
         ThrowUtils.throwIf(id <= 0, ErrorCode.PARAMS_ERROR);
         // 查询数据库
         Picture picture = pictureService.getById(id);
@@ -137,6 +146,7 @@ public class PictureController {
      * 分页获取图片列表（仅管理员可用）
      */
     @PostMapping("/list/page")
+    @ApiOperation(value = "分页获取图片列表（仅管理员可用）")
     @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
     public BaseResponse<Page<Picture>> listPictureByPage(@RequestBody PictureQueryRequest pictureQueryRequest) {
         long current = pictureQueryRequest.getCurrent();
@@ -151,6 +161,7 @@ public class PictureController {
      * 分页获取图片列表（封装类）
      */
     @PostMapping("/list/page/vo")
+    @ApiOperation(value = "分页获取图片列表（封装类）")
     public BaseResponse<Page<PictureVO>> listPictureVOByPage(@RequestBody PictureQueryRequest pictureQueryRequest,
                                                              HttpServletRequest request) {
         long current = pictureQueryRequest.getCurrent();
@@ -172,6 +183,7 @@ public class PictureController {
      * 编辑图片（给用户使用）
      */
     @PostMapping("/edit")
+    @ApiOperation(value = "编辑图片（给用户使用）")
     public BaseResponse<Boolean> editPicture(@RequestBody PictureEditRequest pictureEditRequest, HttpServletRequest request) {
         if (pictureEditRequest == null || pictureEditRequest.getId() <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
@@ -201,7 +213,11 @@ public class PictureController {
         return ResultUtils.success(true);
     }
 
+    /**
+     * 获取图片标签和分类
+     */
     @GetMapping("/tag_category")
+    @ApiOperation(value = "获取图片标签和分类")
     public BaseResponse<PictureTagCategory> listPictureTagCategory() {
         PictureTagCategory pictureTagCategory = new PictureTagCategory();
         List<String> tagList = Arrays.asList("热门", "搞笑", "生活", "高清", "艺术", "校园", "背景", "简历", "创意");
@@ -211,7 +227,11 @@ public class PictureController {
         return ResultUtils.success(pictureTagCategory);
     }
 
+    /**
+     * 审核图片
+     */
     @PostMapping("/review")
+    @ApiOperation(value = "审核图片")
     @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
     public BaseResponse<Boolean> doPictureReview(@RequestBody PictureReviewRequest pictureReviewRequest,
                                                  HttpServletRequest request) {

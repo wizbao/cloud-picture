@@ -92,6 +92,11 @@ public class CosManager {
         return uploadResult;
     }
 
+    /**
+     * 关闭 TransferManager
+     *
+     * @param transferManager 传输管理器
+     */
     public void shutdownTransferManager(TransferManager transferManager) {
         // 指定参数为 true, 则同时会关闭 transferManager 内部的 COSClient 实例。
         // 指定参数为 false, 则不会关闭 transferManager 内部的 COSClient 实例。

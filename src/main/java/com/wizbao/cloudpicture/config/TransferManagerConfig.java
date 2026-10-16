@@ -15,7 +15,11 @@ public class TransferManagerConfig {
     @Resource
     private COSClient cosClient;
 
-    // 创建 TransferManager 实例，这个实例用来后续调用高级接口
+    /**
+     * 创建 TransferManager，用于调用 COS 高级接口
+     *
+     * @return 传输管理器
+     */
     @Bean
     public TransferManager transferManager() {
 

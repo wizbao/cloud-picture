@@ -13,6 +13,10 @@ public enum UserRoleEnum {
 
     private final String value;
 
+    /**
+     * @param text  角色名称
+     * @param value 角色值
+     */
     UserRoleEnum(String text, String value) {
         this.text = text;
         this.value = value;

@@ -32,6 +32,14 @@ import static com.wizbao.cloudpicture.constant.UserConstant.USER_LOGIN_STATE;
 public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     implements UserService{
 
+    /**
+     * 用户注册
+     *
+     * @param userAccount   用户账户
+     * @param userPassword  用户密码
+     * @param checkPassword 校验密码
+     * @return 新用户 id
+     */
     @Override
     public long userRegister(String userAccount, String userPassword, String checkPassword) {
         // 1. 校验
@@ -69,6 +77,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         return user.getId();
     }
 
+    /**
+     * 获取加密后的密码
+     *
+     * @param userPassword 用户密码
+     * @return 加密密码
+     */
     @Override
     public String getEncryptPassword(String userPassword) {
         // 盐值，混淆密码
@@ -76,6 +90,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         return DigestUtils.md5DigestAsHex((SALT + userPassword).getBytes());
     }
 
+    /**
+     * 用户登录
+     *
+     * @param userAccount  用户账户
+     * @param userPassword 用户密码
+     * @param request      请求
+     * @return 脱敏后的用户信息
+     */
     @Override
     public LoginUserVO userLogin(String userAccount, String userPassword, HttpServletRequest request) {
         // 1. 校验
@@ -105,6 +127,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         return this.getLoginUserVO(user);
     }
 
+    /**
+     * 获取当前登录用户
+     *
+     * @param request 请求
+     * @return 当前登录用户
+     */
     @Override
     public User getLoginUser(HttpServletRequest request) {
         // 先判断是否已登录
@@ -123,6 +151,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     }
 
 
+    /**
+     * 获取脱敏的已登录用户信息
+     *
+     * @param user 用户
+     * @return 脱敏后的用户信息
+     */
     @Override
     public LoginUserVO getLoginUserVO(User user) {
         if (user == null) {
@@ -133,6 +167,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         return loginUserVO;
     }
 
+    /**
+     * 用户注销
+     *
+     * @param request 请求
+     * @return 是否注销成功
+     */
     @Override
     public boolean userLogout(HttpServletRequest request) {
         // 先判断是否已登录
@@ -145,6 +185,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         return true;
     }
 
+    /**
+     * 获取脱敏后的用户信息
+     *
+     * @param user 用户
+     * @return 脱敏后的用户信息
+     */
     @Override
     public UserVO getUserVO(User user) {
         if (user == null) {
@@ -155,6 +201,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         return userVO;
     }
 
+    /**
+     * 获取脱敏后的用户信息列表
+     *
+     * @param userList 用户列表
+     * @return 脱敏后的用户信息列表
+     */
     @Override
     public List<UserVO> getUserVOList(List<User> userList) {
         if (CollUtil.isEmpty(userList)) {
@@ -163,6 +215,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         return userList.stream().map(this::getUserVO).collect(Collectors.toList());
     }
 
+    /**
+     * 获取用户查询条件
+     *
+     * @param userQueryRequest 用户查询请求
+     * @return 查询条件
+     */
     @Override
     public QueryWrapper<User> getQueryWrapper(UserQueryRequest userQueryRequest) {
         if (userQueryRequest == null) {
@@ -186,6 +244,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     }
 
 
+    /**
+     * 是否为管理员
+     *
+     * @param user 用户
+     * @return 是否为管理员
+     */
     @Override
     public boolean isAdmin(User user) {
         return user != null && UserRoleEnum.ADMIN.getValue().equals(user.getUserRole());

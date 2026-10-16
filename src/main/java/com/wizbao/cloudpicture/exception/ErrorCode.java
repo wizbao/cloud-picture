@@ -24,6 +24,10 @@ public enum ErrorCode {
      */
     private final String message;
 
+    /**
+     * @param code    状态码
+     * @param message 信息
+     */
     ErrorCode(int code, String message) {
         this.code = code;
         this.message = message;

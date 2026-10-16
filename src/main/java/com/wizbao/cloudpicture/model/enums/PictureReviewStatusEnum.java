@@ -12,6 +12,10 @@ public enum PictureReviewStatusEnum {
     private final String text;  
     private final int value;  
   
+    /**
+     * @param text  审核状态名称
+     * @param value 审核状态值
+     */
     PictureReviewStatusEnum(String text, int value) {  
         this.text = text;  
         this.value = value;  
