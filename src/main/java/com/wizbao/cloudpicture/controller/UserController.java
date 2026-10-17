@@ -162,6 +162,21 @@ public class UserController {
     }
 
     /**
+     * 更新当前登录用户
+     */
+    @PostMapping("/update/my")
+    @ApiOperation(value = "更新当前登录用户")
+    public BaseResponse<Boolean> updateMyUser(@RequestBody UserUpdateMyRequest userUpdateMyRequest,
+                                              HttpServletRequest request) {
+        ThrowUtils.throwIf(userUpdateMyRequest == null, ErrorCode.PARAMS_ERROR);
+        User loginUser = userService.getLoginUser(request);
+        BeanUtils.copyProperties(userUpdateMyRequest, loginUser);
+        boolean result = userService.updateById(loginUser);
+        ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR);
+        return ResultUtils.success(true);
+    }
+
+    /**
      * 分页获取用户封装列表（仅管理员）
      *
      * @param userQueryRequest 查询请求参数
