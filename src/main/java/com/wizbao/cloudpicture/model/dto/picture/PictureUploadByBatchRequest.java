@@ -2,6 +2,8 @@ package com.wizbao.cloudpicture.model.dto.picture;
 
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 public class PictureUploadByBatchRequest {  
   
@@ -15,6 +17,15 @@ public class PictureUploadByBatchRequest {
      */
     private String namePrefix;
 
+    /**
+     * 统一分类
+     */
+    private String category;
+
+    /**
+     * 统一标签
+     */
+    private List<String> tags;
 
     /**  
      * 抓取数量  

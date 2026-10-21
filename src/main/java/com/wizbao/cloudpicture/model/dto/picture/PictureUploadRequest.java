@@ -3,6 +3,7 @@ package com.wizbao.cloudpicture.model.dto.picture;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.List;
 
 @Data
 public class PictureUploadRequest implements Serializable {  
@@ -22,6 +23,15 @@ public class PictureUploadRequest implements Serializable {
      */
     private String picName;
 
+    /**
+     * 图片分类
+     */
+    private String category;
+
+    /**
+     * 图片标签
+     */
+    private List<String> tags;
 
     private static final long serialVersionUID = 1L;  
 }

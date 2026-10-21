@@ -3,6 +3,7 @@ package com.wizbao.cloudpicture.service.impl;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -99,6 +100,12 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture>
         picture.setPicScale(uploadPictureResult.getPicScale());
         picture.setPicFormat(uploadPictureResult.getPicFormat());
         picture.setUserId(loginUser.getId());
+        if (pictureUploadRequest != null) {
+            picture.setCategory(pictureUploadRequest.getCategory());
+            if (CollUtil.isNotEmpty(pictureUploadRequest.getTags())) {
+                picture.setTags(JSONUtil.toJsonStr(pictureUploadRequest.getTags()));
+            }
+        }
 
         this.fillReviewParams(picture, loginUser);
 
@@ -339,6 +346,8 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture>
                 namePrefix = searchText;
             }
             PictureUploadRequest pictureUploadRequest = new PictureUploadRequest();
+            pictureUploadRequest.setCategory(pictureUploadByBatchRequest.getCategory());
+            pictureUploadRequest.setTags(pictureUploadByBatchRequest.getTags());
             if (StrUtil.isNotBlank(namePrefix)) {
                 // 设置图片名称，序号连续递增
                 pictureUploadRequest.setPicName(namePrefix + (uploadCount + 1));
