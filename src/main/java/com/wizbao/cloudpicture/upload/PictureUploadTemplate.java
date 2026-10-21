@@ -75,7 +75,13 @@ public abstract class PictureUploadTemplate {
     /**  
      * 处理输入源并生成本地临时文件  
      */  
-    protected abstract void processFile(Object inputSource, File file) throws Exception;  
+    protected abstract void processFile(Object inputSource, File file) throws Exception;
+
+    /**
+     * 上传方式
+     * @return
+     */
+    protected abstract String getType();
   
     /**  
      * 封装返回结果  

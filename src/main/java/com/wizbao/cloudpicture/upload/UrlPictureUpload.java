@@ -9,6 +9,7 @@ import cn.hutool.http.Method;
 import com.wizbao.cloudpicture.exception.BusinessException;
 import com.wizbao.cloudpicture.exception.ErrorCode;
 import com.wizbao.cloudpicture.exception.ThrowUtils;
+import com.wizbao.cloudpicture.model.enums.PictureUploadTypeEnum;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -81,5 +82,10 @@ public class UrlPictureUpload extends PictureUploadTemplate {
         String fileUrl = (String) inputSource;  
         // 下载文件到临时目录  
         HttpUtil.downloadFile(fileUrl, file);
-    }  
+    }
+
+    @Override
+    protected String getType() {
+        return PictureUploadTypeEnum.URL_UPLOAD.getValue();
+    }
 }

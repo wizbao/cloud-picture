@@ -9,7 +9,6 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.wizbao.cloudpicture.exception.BusinessException;
 import com.wizbao.cloudpicture.exception.ErrorCode;
 import com.wizbao.cloudpicture.exception.ThrowUtils;
-import com.wizbao.cloudpicture.manager.FileManager;
 import com.wizbao.cloudpicture.mapper.PictureMapper;
 import com.wizbao.cloudpicture.model.dto.file.UploadPictureResult;
 import com.wizbao.cloudpicture.model.dto.picture.PictureQueryRequest;
@@ -19,13 +18,13 @@ import com.wizbao.cloudpicture.model.dto.picture.PictureUploadRequest;
 import com.wizbao.cloudpicture.model.entity.Picture;
 import com.wizbao.cloudpicture.model.entity.User;
 import com.wizbao.cloudpicture.model.enums.PictureReviewStatusEnum;
+import com.wizbao.cloudpicture.model.enums.PictureUploadTypeEnum;
 import com.wizbao.cloudpicture.model.vo.PictureVO;
 import com.wizbao.cloudpicture.model.vo.UserVO;
 import com.wizbao.cloudpicture.service.PictureService;
 import com.wizbao.cloudpicture.service.UserService;
-import com.wizbao.cloudpicture.upload.FilePictureUpload;
+import com.wizbao.cloudpicture.upload.PictureUploadFactory;
 import com.wizbao.cloudpicture.upload.PictureUploadTemplate;
-import com.wizbao.cloudpicture.upload.UrlPictureUpload;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -46,18 +45,12 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture>
-    implements PictureService{
+        implements PictureService {
 
-    @Resource
-    private FileManager fileManager;
     @Resource
     private UserService userService;
-
     @Resource
-    private FilePictureUpload filePictureUpload;
-
-    @Resource
-    private UrlPictureUpload urlPictureUpload;
+    private PictureUploadFactory pictureUploadFactory;
 
     /**
      * 上传图片，支持新增和更新
@@ -89,11 +82,9 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture>
         // 按照用户 id 划分目录
         String uploadPathPrefix = String.format("public/%s", loginUser.getId());
         // 根据 inputSource 类型区分上传方式
-        PictureUploadTemplate pictureUploadTemplate = filePictureUpload;
-        if (inputSource instanceof String) {
-            pictureUploadTemplate = urlPictureUpload;
-        }
-        UploadPictureResult uploadPictureResult = pictureUploadTemplate.uploadPicture(inputSource, uploadPathPrefix);
+        String type = inputSource instanceof String ? PictureUploadTypeEnum.URL_UPLOAD.getValue() : PictureUploadTypeEnum.FILE_UPLOAD.getValue();
+        PictureUploadTemplate template = pictureUploadFactory.getTemplate(type);
+        UploadPictureResult uploadPictureResult = template.uploadPicture(inputSource, uploadPathPrefix);
         // 构造要入库的图片信息
         Picture picture = new Picture();
         picture.setUrl(uploadPictureResult.getUrl());
@@ -109,7 +100,7 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture>
         picture.setPicFormat(uploadPictureResult.getPicFormat());
         picture.setUserId(loginUser.getId());
 
-        this.fillReviewParams(picture,loginUser);
+        this.fillReviewParams(picture, loginUser);
 
         // 如果 pictureId 不为空，表示更新，否则是新增
         if (pictureId != null) {
@@ -318,11 +309,13 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture>
         String fetchUrl = String.format("https://cn.bing.com/images/async?q=%s&mmasync=1", searchText);
         Document document;
         try {
+            // 解析HTML
             document = Jsoup.connect(fetchUrl).get();
         } catch (IOException e) {
             log.error("获取页面失败", e);
             throw new BusinessException(ErrorCode.OPERATION_ERROR, "获取页面失败");
         }
+        // 定位元素
         Element div = document.getElementsByClass("dgControl").first();
         if (ObjUtil.isNull(div)) {
             throw new BusinessException(ErrorCode.OPERATION_ERROR, "获取元素失败");
@@ -330,6 +323,7 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture>
         Elements imgElementList = div.select("img.mimg");
         int uploadCount = 0;
         for (Element imgElement : imgElementList) {
+            // 提取数据
             String fileUrl = imgElement.attr("src");
             if (StrUtil.isBlank(fileUrl)) {
                 log.info("当前链接为空，已跳过: {}", fileUrl);
@@ -344,13 +338,13 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture>
             if (StrUtil.isBlank(namePrefix)) {
                 namePrefix = searchText;
             }
-            // 上传图片
             PictureUploadRequest pictureUploadRequest = new PictureUploadRequest();
             if (StrUtil.isNotBlank(namePrefix)) {
                 // 设置图片名称，序号连续递增
                 pictureUploadRequest.setPicName(namePrefix + (uploadCount + 1));
             }
             try {
+                // 上传图片
                 PictureVO pictureVO = this.uploadPicture(fileUrl, pictureUploadRequest, loginUser);
                 log.info("图片上传成功, id = {}", pictureVO.getId());
                 uploadCount++;

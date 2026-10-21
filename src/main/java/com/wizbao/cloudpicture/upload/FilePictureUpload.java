@@ -3,6 +3,7 @@ package com.wizbao.cloudpicture.upload;
 import cn.hutool.core.io.FileUtil;
 import com.wizbao.cloudpicture.exception.ErrorCode;
 import com.wizbao.cloudpicture.exception.ThrowUtils;
+import com.wizbao.cloudpicture.model.enums.PictureUploadTypeEnum;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -38,5 +39,10 @@ public class FilePictureUpload extends PictureUploadTemplate {
     protected void processFile(Object inputSource, File file) throws Exception {
         MultipartFile multipartFile = (MultipartFile) inputSource;  
         multipartFile.transferTo(file);  
-    }  
+    }
+
+    @Override
+    protected String getType() {
+        return PictureUploadTypeEnum.FILE_UPLOAD.getValue();
+    }
 }
