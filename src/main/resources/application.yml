@@ -6,15 +6,21 @@ server:
 spring:
   application:
     name: cloud-picture-backend
+  # 使用本地配置
+  profiles:
+    active: local
   # 数据库配置
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://rm-cn-rap4ztia30002xuo.rwlb.cn-guangzhou.rds.aliyuncs.com:3306/cloud_picture?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useSSL=false
     username: root
     password: Wb123456!
-  # 使用本地配置
-  profiles:
-    active: local
+  redis:
+    database:
+      database: 0
+      host: 127.0.0.1
+      port: 6379
+      timeout: 5000
 
 mybatis-plus:
   configuration:
