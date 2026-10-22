@@ -1,5 +1,6 @@
 package com.wizbao.cloudpicture.manager;
 
+import cn.hutool.core.io.FileUtil;
 import cn.hutool.json.JSONUtil;
 import com.qcloud.cos.COSClient;
 import com.qcloud.cos.exception.CosClientException;
@@ -15,6 +16,8 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.io.File;
+import java.util.LinkedList;
+import java.util.List;
 
 
 @Slf4j
@@ -68,6 +71,15 @@ public class CosManager {
         PicOperations picOperations = new PicOperations();
         // 是否返回原图信息，0不返回原图信息，1返回原图信息，默认为0
         picOperations.setIsPicInfo(1);
+        // 添加图片处理规则
+        // 格式转换为webp,减少图片大小
+        List<PicOperations.Rule> ruleList = new LinkedList<>();
+        PicOperations.Rule rule1 = new PicOperations.Rule();
+        rule1.setBucket(cosClientConfig.getBucket());
+        rule1.setFileId(FileUtil.mainName(key)+".webp");
+        rule1.setRule("imageMogr2/format/webp");
+        ruleList.add(rule1);
+        picOperations.setRules(ruleList);
         putObjectRequest.setPicOperations(picOperations);
 
         UploadResult uploadResult = null;
