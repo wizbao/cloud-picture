@@ -11,10 +11,11 @@ spring:
     active: local
   # 数据库配置
   datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://rm-cn-rap4ztia30002xuo.rwlb.cn-guangzhou.rds.aliyuncs.com:3306/cloud_picture?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useSSL=false
-    username: root
-    password: Wb123456!
+    driver-class-name: xxx
+    url: xxx
+    username: xxx
+    password: xxx
+  # redis配置
   redis:
     database:
       database: 0
@@ -33,7 +34,14 @@ mybatis-plus:
       logic-delete-value: 1 # 逻辑已删除值（默认为 1）
       logic-not-delete-value: 0 # 逻辑未删除值（默认为 0）
 
-
+# 对象存储配置（需要从腾讯云获取）
+cos:
+  client:
+    host: xxx
+    secretId: xxx
+    secretKey: xxx
+    region: xxx
+    bucket: xxx
 
 # 接口文档配置
 knife4j:
