@@ -86,9 +86,11 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture>
         String type = inputSource instanceof String ? PictureUploadTypeEnum.URL_UPLOAD.getValue() : PictureUploadTypeEnum.FILE_UPLOAD.getValue();
         PictureUploadTemplate template = pictureUploadFactory.getTemplate(type);
         UploadPictureResult uploadPictureResult = template.uploadPicture(inputSource, uploadPathPrefix);
+
         // 构造要入库的图片信息
         Picture picture = new Picture();
         picture.setUrl(uploadPictureResult.getUrl());
+        picture.setThumbnailUrl(uploadPictureResult.getThumbnailUrl());
         String picName = uploadPictureResult.getPicName();
         if (pictureUploadRequest != null && StrUtil.isNotBlank(pictureUploadRequest.getPicName())) {
             picName = pictureUploadRequest.getPicName();

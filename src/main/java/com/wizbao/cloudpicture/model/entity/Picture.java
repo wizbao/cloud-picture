@@ -116,5 +116,11 @@ public class Picture extends BasePO {
      */
     private LocalDateTime reviewTime;
 
+    /**
+     * 缩略图 url
+     */
+    private String thumbnailUrl;
+
+
 
 }
