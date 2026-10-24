@@ -1,6 +1,5 @@
 package com.wizbao.cloudpicture.controller;
 
-import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.wizbao.cloudpicture.annotation.AuthCheck;
@@ -14,10 +13,8 @@ import com.wizbao.cloudpicture.exception.ThrowUtils;
 import com.wizbao.cloudpicture.model.dto.space.SpaceAddRequest;
 import com.wizbao.cloudpicture.model.dto.space.SpaceQueryRequest;
 import com.wizbao.cloudpicture.model.dto.space.SpaceUpdateRequest;
-import com.wizbao.cloudpicture.model.entity.Picture;
 import com.wizbao.cloudpicture.model.entity.Space;
 import com.wizbao.cloudpicture.model.entity.User;
-import com.wizbao.cloudpicture.model.vo.PictureVO;
 import com.wizbao.cloudpicture.model.vo.SpaceVO;
 import com.wizbao.cloudpicture.service.SpaceService;
 import com.wizbao.cloudpicture.service.UserService;
@@ -93,6 +90,26 @@ public class SpaceController {
                 spaceService.getQueryWrapper(spaceQueryRequest));
         return ResultUtils.success(spacePage);
     }
+
+    /**
+     * 分页获取图片列表（封装类）
+     */
+    @PostMapping("/list/page/vo")
+    @ApiOperation(value = "分页获取空间列表（封装类）")
+    public BaseResponse<Page<SpaceVO>> listSpaceVOByPage(@RequestBody SpaceQueryRequest spaceQueryRequest, HttpServletRequest request) {
+        ThrowUtils.throwIf(spaceQueryRequest == null, ErrorCode.PARAMS_ERROR);
+        long current = spaceQueryRequest.getCurrent();
+        long size = spaceQueryRequest.getPageSize();
+        ThrowUtils.throwIf(current < 1 || size < 1, ErrorCode.PARAMS_ERROR, "分页参数错误");
+
+        userService.getLoginUser(request);
+
+        Page<Space> spacePage = spaceService.page(
+                new Page<>(current, size),
+                spaceService.getQueryWrapper(spaceQueryRequest));
+        return ResultUtils.success(spaceService.getSpaceVOPage(spacePage, request));
+    }
+
 
     /**
      * 删除图片

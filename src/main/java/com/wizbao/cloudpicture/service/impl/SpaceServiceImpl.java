@@ -16,7 +16,6 @@ import com.wizbao.cloudpicture.model.entity.Picture;
 import com.wizbao.cloudpicture.model.entity.Space;
 import com.wizbao.cloudpicture.model.entity.User;
 import com.wizbao.cloudpicture.model.enums.SpaceLevelEnum;
-import com.wizbao.cloudpicture.model.vo.PictureVO;
 import com.wizbao.cloudpicture.model.vo.SpaceVO;
 import com.wizbao.cloudpicture.model.vo.UserVO;
 import com.wizbao.cloudpicture.service.PictureService;
@@ -195,5 +194,31 @@ public class SpaceServiceImpl extends ServiceImpl<SpaceMapper, Space>
             spaceVO.setUser(userVO);
         }
         return spaceVO;
+    }
+
+    @Override
+    public Page<SpaceVO> getSpaceVOPage(Page<Space> spacePage, HttpServletRequest request) {
+        List<Space> spaceList = spacePage.getRecords();
+        Page<SpaceVO> spaceVOPage = new Page<>(spacePage.getCurrent(), spacePage.getSize(), spacePage.getTotal());
+        if (CollUtil.isEmpty(spaceList)) {
+            return spaceVOPage;
+        }
+        // 对象列表 => 封装对象列表
+        List<SpaceVO> spaceVOList = spaceList.stream().map(SpaceVO::objToVo).collect(Collectors.toList());
+        // 1. 关联查询用户信息
+        Set<Long> userIdSet = spaceList.stream().map(Space::getUserId).collect(Collectors.toSet());
+        Map<Long, List<User>> userIdUserListMap = userService.listByIds(userIdSet).stream()
+                .collect(Collectors.groupingBy(User::getId));
+        // 2. 填充信息
+        spaceVOList.forEach(spaceVO -> {
+            Long userId = spaceVO.getUserId();
+            User user = null;
+            if (userIdUserListMap.containsKey(userId)) {
+                user = userIdUserListMap.get(userId).get(0);
+            }
+            spaceVO.setUser(userService.getUserVO(user));
+        });
+        spaceVOPage.setRecords(spaceVOList);
+        return spaceVOPage;
     }
 }

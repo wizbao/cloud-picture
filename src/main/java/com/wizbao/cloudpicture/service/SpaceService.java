@@ -1,6 +1,7 @@
 package com.wizbao.cloudpicture.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.wizbao.cloudpicture.model.dto.space.SpaceAddRequest;
 import com.wizbao.cloudpicture.model.dto.space.SpaceQueryRequest;
@@ -23,4 +24,6 @@ public interface SpaceService extends IService<Space> {
     void deleteSpace(Long id, User loginUser);
 
     SpaceVO getSpaceVO(Space space, HttpServletRequest request);
+
+    Page<SpaceVO> getSpaceVOPage(Page<Space> spacePage,HttpServletRequest request);
 }
