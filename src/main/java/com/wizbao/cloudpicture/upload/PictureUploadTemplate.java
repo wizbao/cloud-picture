@@ -15,6 +15,7 @@ import com.wizbao.cloudpicture.exception.ErrorCode;
 import com.wizbao.cloudpicture.manager.CosManager;
 import com.wizbao.cloudpicture.model.dto.file.UploadPictureResult;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 
 import javax.annotation.Resource;
 import java.io.File;
@@ -29,6 +30,9 @@ public abstract class PictureUploadTemplate {
 
     @Resource
     protected CosClientConfig cosClientConfig;
+
+    @Value("${img.access-host}")
+    private String imgAccessPath;
 
     /**
      * 模板方法，定义上传流程
@@ -119,7 +123,7 @@ public abstract class PictureUploadTemplate {
         uploadPictureResult.setPicScale(picScale);
         uploadPictureResult.setPicFormat(imageInfo.getFormat());
         uploadPictureResult.setPicSize(FileUtil.size(file));
-        uploadPictureResult.setUrl(cosClientConfig.getHost() + "/" + uploadPath);
+        uploadPictureResult.setUrl(imgAccessPath + "/" + uploadPath);
         return uploadPictureResult;
     }
 
@@ -136,9 +140,9 @@ public abstract class PictureUploadTemplate {
         uploadPictureResult.setPicFormat(compressedCiObject.getFormat());
         uploadPictureResult.setPicSize(compressedCiObject.getSize().longValue());
         // 设置图片为压缩后的地址
-        uploadPictureResult.setUrl(cosClientConfig.getHost() + "/" + compressedCiObject.getKey());
+        uploadPictureResult.setUrl(imgAccessPath + "/" + compressedCiObject.getKey());
         // 设置缩略图
-        uploadPictureResult.setThumbnailUrl(cosClientConfig.getHost() + "/" + thumbnailCiObject.getKey());
+        uploadPictureResult.setThumbnailUrl(imgAccessPath + "/" + thumbnailCiObject.getKey());
         return uploadPictureResult;
     }
 

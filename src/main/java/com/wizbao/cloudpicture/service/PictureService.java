@@ -10,6 +10,7 @@ import com.wizbao.cloudpicture.model.dto.picture.PictureUploadRequest;
 import com.wizbao.cloudpicture.model.entity.Picture;
 import com.wizbao.cloudpicture.model.entity.User;
 import com.wizbao.cloudpicture.model.vo.PictureVO;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
@@ -88,4 +89,6 @@ public interface PictureService extends IService<Picture> {
             User loginUser
     );
 
+    @Async
+    void clearPictureFile(Picture oldPicture);
 }
