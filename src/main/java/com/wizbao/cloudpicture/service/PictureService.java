@@ -3,10 +3,7 @@ package com.wizbao.cloudpicture.service;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.wizbao.cloudpicture.model.dto.picture.PictureQueryRequest;
-import com.wizbao.cloudpicture.model.dto.picture.PictureReviewRequest;
-import com.wizbao.cloudpicture.model.dto.picture.PictureUploadByBatchRequest;
-import com.wizbao.cloudpicture.model.dto.picture.PictureUploadRequest;
+import com.wizbao.cloudpicture.model.dto.picture.*;
 import com.wizbao.cloudpicture.model.entity.Picture;
 import com.wizbao.cloudpicture.model.entity.User;
 import com.wizbao.cloudpicture.model.vo.PictureVO;
@@ -91,4 +88,16 @@ public interface PictureService extends IService<Picture> {
 
     @Async
     void clearPictureFile(Picture oldPicture);
+
+    /**
+     * 图片更新和删除的权限校验
+     *
+     * @param loginUser
+     * @param picture
+     */
+    void checkPictureAuth(User loginUser, Picture picture);
+
+    void deletePicture(long pictureId, User loginUser);
+
+    void editPicture(PictureEditRequest pictureEditRequest, User loginUser);
 }
