@@ -43,6 +43,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -593,6 +594,14 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture>
         // 操作数据库
         boolean result = this.updateById(picture);
         ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR);
+    }
+
+    @Override
+    public List<Picture> listPictureBySpaceId(Long spaceId) {
+        if (spaceId == null) {
+            return Collections.emptyList();
+        }
+        return this.lambdaQuery().eq(Picture::getSpaceId, spaceId).list();
     }
 
 

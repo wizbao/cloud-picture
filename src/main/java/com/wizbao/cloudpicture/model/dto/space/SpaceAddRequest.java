@@ -17,5 +17,15 @@ public class SpaceAddRequest implements Serializable {
      */
     private Integer spaceLevel;
 
+    /**
+     * 空间图片的最大总大小
+     */
+    private Long maxSize;
+
+    /**
+     * 空间图片的最大数量
+     */
+    private Long maxCount;
+
     private static final long serialVersionUID = 1L;
 }
