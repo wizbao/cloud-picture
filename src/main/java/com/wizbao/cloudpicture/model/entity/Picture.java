@@ -121,6 +121,11 @@ public class Picture extends BasePO {
      */
     private String thumbnailUrl;
 
+    /**
+     * 空间 id
+     */
+    private Long spaceId;
+
 
 
 }

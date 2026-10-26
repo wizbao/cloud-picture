@@ -1,24 +1,33 @@
 package com.wizbao.cloudpicture.controller;
 
+import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.wizbao.cloudpicture.annotation.AuthCheck;
 import com.wizbao.cloudpicture.common.BaseResponse;
+import com.wizbao.cloudpicture.common.DeleteRequest;
 import com.wizbao.cloudpicture.common.ResultUtils;
 import com.wizbao.cloudpicture.constant.UserConstant;
 import com.wizbao.cloudpicture.exception.BusinessException;
 import com.wizbao.cloudpicture.exception.ErrorCode;
 import com.wizbao.cloudpicture.exception.ThrowUtils;
+import com.wizbao.cloudpicture.model.dto.space.SpaceAddRequest;
+import com.wizbao.cloudpicture.model.dto.space.SpaceQueryRequest;
 import com.wizbao.cloudpicture.model.dto.space.SpaceUpdateRequest;
 import com.wizbao.cloudpicture.model.entity.Space;
+import com.wizbao.cloudpicture.model.entity.User;
+import com.wizbao.cloudpicture.model.vo.SpaceVO;
 import com.wizbao.cloudpicture.service.SpaceService;
+import com.wizbao.cloudpicture.service.UserService;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import java.util.Objects;
 
 @Slf4j
 @RestController
@@ -28,6 +37,8 @@ public class SpaceController {
 
     @Resource
     private SpaceService spaceService;
+    @Resource
+    private UserService userService;
 
     @PostMapping("/update")
     @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
@@ -52,7 +63,77 @@ public class SpaceController {
         return ResultUtils.success(true);
     }
 
+    @PostMapping("/add")
+    public BaseResponse<Boolean> addSpace(@RequestBody SpaceAddRequest spaceAddRequest, HttpServletRequest request) {
+        if (spaceAddRequest == null || StrUtil.isBlank(spaceAddRequest.getSpaceName()) || Objects.isNull(spaceAddRequest.getSpaceLevel())) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        User loginUser = userService.getLoginUser(request);
+        spaceService.addSpace(spaceAddRequest, loginUser);
+        return ResultUtils.success(true);
+    }
+
+    /**
+     * 分页获取空间信息列表（仅管理员可用）
+     */
+    @PostMapping("/list/page")
+    @ApiOperation(value = "分页获取空间信息列表（仅管理员可用）")
+    @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
+    public BaseResponse<Page<Space>> listSpaceByPage(@RequestBody SpaceQueryRequest spaceQueryRequest) {
+        ThrowUtils.throwIf(spaceQueryRequest == null, ErrorCode.PARAMS_ERROR);
+        long current = spaceQueryRequest.getCurrent();
+        long size = spaceQueryRequest.getPageSize();
+        ThrowUtils.throwIf(current < 1 || size < 1, ErrorCode.PARAMS_ERROR, "分页参数错误");
+
+        Page<Space> spacePage = spaceService.page(
+                new Page<>(current, size),
+                spaceService.getQueryWrapper(spaceQueryRequest));
+        return ResultUtils.success(spacePage);
+    }
+
+    /**
+     * 分页获取图片列表（封装类）
+     */
+    @PostMapping("/list/page/vo")
+    @ApiOperation(value = "分页获取空间列表（封装类）")
+    public BaseResponse<Page<SpaceVO>> listSpaceVOByPage(@RequestBody SpaceQueryRequest spaceQueryRequest, HttpServletRequest request) {
+        ThrowUtils.throwIf(spaceQueryRequest == null, ErrorCode.PARAMS_ERROR);
+        long current = spaceQueryRequest.getCurrent();
+        long size = spaceQueryRequest.getPageSize();
+        ThrowUtils.throwIf(current < 1 || size < 1, ErrorCode.PARAMS_ERROR, "分页参数错误");
+
+        userService.getLoginUser(request);
+
+        Page<Space> spacePage = spaceService.page(
+                new Page<>(current, size),
+                spaceService.getQueryWrapper(spaceQueryRequest));
+        return ResultUtils.success(spaceService.getSpaceVOPage(spacePage, request));
+    }
 
 
+    /**
+     * 删除图片
+     */
+    @PostMapping("/delete")
+    @ApiOperation(value = "删除空间")
+    public BaseResponse<Boolean> deleteSpace(@RequestBody DeleteRequest deleteRequest, HttpServletRequest request) {
+        User loginUser = userService.getLoginUser(request);
+        spaceService.deleteSpace(deleteRequest.getId(), loginUser);
+        return ResultUtils.success(true);
+    }
 
+    /**
+     * 根据 id 获取图片（封装类）
+     */
+    @GetMapping("/get/vo")
+    @ApiOperation(value = "根据 id 获取空间（封装类）")
+    public BaseResponse<SpaceVO> getSpaceVOById(@ApiParam("空间 id") long id, HttpServletRequest request) {
+        ThrowUtils.throwIf(id <= 0, ErrorCode.PARAMS_ERROR);
+        // 查询数据库
+        Space space = spaceService.getById(id);
+        ThrowUtils.throwIf(space == null, ErrorCode.NOT_FOUND_ERROR);
+
+        // 获取封装类
+        return ResultUtils.success(spaceService.getSpaceVO(space, request));
+    }
 }

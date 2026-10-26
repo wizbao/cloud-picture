@@ -3,16 +3,15 @@ package com.wizbao.cloudpicture.service;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.wizbao.cloudpicture.model.dto.picture.PictureQueryRequest;
-import com.wizbao.cloudpicture.model.dto.picture.PictureReviewRequest;
-import com.wizbao.cloudpicture.model.dto.picture.PictureUploadByBatchRequest;
-import com.wizbao.cloudpicture.model.dto.picture.PictureUploadRequest;
+import com.wizbao.cloudpicture.model.dto.picture.*;
 import com.wizbao.cloudpicture.model.entity.Picture;
 import com.wizbao.cloudpicture.model.entity.User;
 import com.wizbao.cloudpicture.model.vo.PictureVO;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 
 public interface PictureService extends IService<Picture> {
@@ -88,4 +87,20 @@ public interface PictureService extends IService<Picture> {
             User loginUser
     );
 
+    @Async
+    void clearPictureFile(Picture oldPicture);
+
+    /**
+     * 图片更新和删除的权限校验
+     *
+     * @param loginUser
+     * @param picture
+     */
+    void checkPictureAuth(User loginUser, Picture picture);
+
+    void deletePicture(long pictureId, User loginUser);
+
+    void editPicture(PictureEditRequest pictureEditRequest, User loginUser);
+
+    List<Picture> listPictureBySpaceId(Long spaceId);
 }

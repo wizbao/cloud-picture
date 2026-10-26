@@ -1,5 +1,8 @@
 package com.wizbao.cloudpicture.controller;
 
+import cn.hutool.core.date.LocalDateTimeUtil;
+import cn.hutool.core.io.FileUtil;
+import cn.hutool.core.util.RandomUtil;
 import com.qcloud.cos.model.COSObjectInputStream;
 import com.qcloud.cos.utils.IOUtils;
 import com.wizbao.cloudpicture.annotation.AuthCheck;
@@ -9,19 +12,23 @@ import com.wizbao.cloudpicture.constant.UserConstant;
 import com.wizbao.cloudpicture.exception.BusinessException;
 import com.wizbao.cloudpicture.exception.ErrorCode;
 import com.wizbao.cloudpicture.manager.CosManager;
+import com.wizbao.cloudpicture.model.entity.User;
 import com.wizbao.cloudpicture.service.PictureService;
 import com.wizbao.cloudpicture.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDateTime;
 
 @Slf4j
 @RestController
@@ -33,22 +40,25 @@ public class FileController {
     private CosManager cosManager;
     @Resource
     private UserService userService;
-    @Resource
-    private PictureService pictureService;
+    @Value("${img.access-host}")
+    private String imgAccessPath;
 
     /**
-     * 测试文件上传
+     * 文件上传
      *
      * @param multipartFile
      * @return
      */
-    @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
-    @PostMapping("/test/upload")
-    @ApiOperation(value = "测试文件上传")
-    public BaseResponse<String> testUploadFile(@ApiParam("文件") @RequestPart("file") MultipartFile multipartFile) {
+    @PostMapping("/upload")
+    @ApiOperation(value = "文件上传")
+    public BaseResponse<String> uploadFile(@ApiParam("文件") @RequestPart("file") MultipartFile multipartFile, HttpServletRequest request) {
+        User loginUser = userService.getLoginUser(request);
         // 文件目录
+        String uuid = RandomUtil.randomString(16);
         String filename = multipartFile.getOriginalFilename();
-        String filepath = String.format("/test/%s", filename);
+        String uploadFilename = String.format("%s_%s.%s", LocalDateTimeUtil.formatNormal(LocalDateTime.now()), uuid,
+                FileUtil.getSuffix(filename));
+        String filepath = String.format("/public/%s/%s", loginUser.getId(), uploadFilename);
         File file = null;
         try {
             // 上传文件
@@ -56,7 +66,10 @@ public class FileController {
             multipartFile.transferTo(file);
             cosManager.uploadFile(filepath, file);
             // 返回可访问地址
-            return ResultUtils.success(filepath);
+            String accessHost = imgAccessPath.endsWith("/")
+                    ? imgAccessPath.substring(0, imgAccessPath.length() - 1)
+                    : imgAccessPath;
+            return ResultUtils.success(accessHost + filepath);
         } catch (Exception e) {
             log.error("file upload error, filepath = " + filepath, e);
             throw new BusinessException(ErrorCode.SYSTEM_ERROR, "上传失败");
@@ -101,7 +114,6 @@ public class FileController {
             }
         }
     }
-
 
 
 }

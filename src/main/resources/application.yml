@@ -51,6 +51,11 @@ cos:
     region: xxx
     bucket: xxx
 
+# 配置CDN加速域名
+img:
+  # 图片访问路径
+  access-host: http://xxx
+
 # 接口文档配置
 knife4j:
   enable: true
