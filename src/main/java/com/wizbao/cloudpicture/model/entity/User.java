@@ -1,14 +1,13 @@
 package com.wizbao.cloudpicture.model.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-
-import java.time.LocalDateTime;
-import java.util.Date;
-
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+
+import java.time.LocalDateTime;
 
 /**
  * 用户
@@ -59,5 +58,8 @@ public class User extends BasePO {
      * 编辑时间
      */
     private LocalDateTime editTime;
+
+    @TableField(exist = false)
+    private static final long serialVersionUID = 1L;
 
 }
