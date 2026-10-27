@@ -51,6 +51,10 @@ cos:
     region: xxx
     bucket: xxx
 
+# SerpAPI 以图搜图，Key 从 https://serpapi.com/manage-api-key 获取
+serpapi:
+  api-key: xxx
+
 # 配置CDN加速域名
 img:
   # 图片访问路径
