@@ -103,4 +103,6 @@ public interface PictureService extends IService<Picture> {
     void editPicture(PictureEditRequest pictureEditRequest, User loginUser);
 
     List<Picture> listPictureBySpaceId(Long spaceId);
+
+    List<PictureVO> searchPictureByColor(Long spaceId, String picColor, User loginUser);
 }
