@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="drawio" version="26.0.0">
+  <diagram name="解析边缘节点 IP">
+    <mxGraphModel dx="1400" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1680" pageHeight="680" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="2" value="&lt;b&gt;浏览器&lt;/b&gt;&#xa;请求 img.code-abao.cc" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe4b5;strokeColor=#b8651e;fontFamily=Helvetica;fontSize=12;sketch=1;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="40" y="180" width="200" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="3" value="&lt;b&gt;DNS 系统&lt;/b&gt;&#xa;按 CNAME 记录查找" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#def0dc;strokeColor=#5c8a49;fontFamily=Helvetica;fontSize=12;sketch=1;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="460" y="170" width="240" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="4" value="&lt;b&gt;腾讯云调度系统&lt;/b&gt;&#xa;img.code-abao.cc.cdn.dnsv1.com&#xa;从多个边缘节点中选 IP" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e6d7e8;strokeColor=#7b4397;fontFamily=Helvetica;fontSize=12;sketch=1;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="1100" y="150" width="280" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="5" value="&lt;b&gt;边缘节点 · 华北&lt;/b&gt;&#xa;候选" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffd9b3;strokeColor=#c25100;fontFamily=Helvetica;fontSize=12;sketch=1;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="890" y="460" width="200" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="6" value="&lt;b&gt;边缘节点 · 华东&lt;/b&gt;&#xa;本次选中" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff4cc;strokeColor=#b8901a;fontFamily=Helvetica;fontSize=12;sketch=1;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="1140" y="460" width="200" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="7" value="&lt;b&gt;边缘节点 · 华南&lt;/b&gt;&#xa;候选" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffcdbf;strokeColor=#a53d3d;fontFamily=Helvetica;fontSize=12;sketch=1;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="1390" y="460" width="200" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="8" value="1. 解析 img.code-abao.cc" style="edgeStyle=orthogonalEdgeStyle;curved=1;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;endFill=1;sketch=1;strokeWidth=2;fontFamily=Helvetica;fontSize=12;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="2" target="3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="9" value="2. 根据 CNAME 域名找到调度系统&#xa;img.code-abao.cc.cdn.dnsv1.com" style="edgeStyle=orthogonalEdgeStyle;curved=1;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;endFill=1;sketch=1;strokeWidth=2;fontFamily=Helvetica;fontSize=12;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="3" target="4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="10" value="" style="edgeStyle=orthogonalEdgeStyle;curved=1;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;endFill=1;sketch=1;strokeWidth=2;fontFamily=Helvetica;fontSize=12;exitX=0.2;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="4" target="5">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="11" value="选择最近节点" style="edgeStyle=orthogonalEdgeStyle;curved=1;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;endFill=1;sketch=1;strokeWidth=2;fontFamily=Helvetica;fontSize=12;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="4" target="6">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="12" value="" style="edgeStyle=orthogonalEdgeStyle;curved=1;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;endFill=1;sketch=1;strokeWidth=2;fontFamily=Helvetica;fontSize=12;exitX=0.8;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="4" target="7">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="13" value="3. 返回最近边缘节点 IP" style="edgeStyle=orthogonalEdgeStyle;curved=1;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;endFill=1;sketch=1;strokeWidth=2;fontFamily=Helvetica;fontSize=12;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.75;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="4" target="3">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1240" y="70" />
+              <mxPoint x="640" y="70" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="14" value="4. 把 IP 交给浏览器" style="edgeStyle=orthogonalEdgeStyle;curved=1;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;endFill=1;sketch=1;strokeWidth=2;fontFamily=Helvetica;fontSize=12;exitX=0.25;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="3" target="2">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="520" y="40" />
+              <mxPoint x="140" y="40" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

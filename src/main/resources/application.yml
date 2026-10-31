@@ -3,12 +3,21 @@ server:
   port: 8123
   servlet:
     context-path: /api
+    # cookie 30 天过期
+    session:
+      cookie:
+        max-age: 2592000
 spring:
   application:
     name: cloud-picture-backend
   # 使用本地配置
   profiles:
     active: local
+  # session 配置
+  session:
+    store-type: redis
+    # session 30 天过期
+    timeout: 2592000
   # 数据库配置
   datasource:
     driver-class-name: xxx
@@ -41,6 +50,10 @@ cos:
     secretKey: xxx
     region: xxx
     bucket: xxx
+
+# SerpAPI 以图搜图，Key 从 https://serpapi.com/manage-api-key 获取
+serpapi:
+  api-key: xxx
 
 # 配置CDN加速域名
 img:
