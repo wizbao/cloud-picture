@@ -1,11 +1,15 @@
 package com.wizbao.cloudpicture.manager;
 
 import cn.hutool.core.io.FileUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
 import com.qcloud.cos.COSClient;
 import com.qcloud.cos.exception.CosClientException;
 import com.qcloud.cos.exception.CosServiceException;
 import com.qcloud.cos.model.*;
+import com.qcloud.cos.model.ciModel.common.ImageProcessRequest;
+import com.qcloud.cos.model.ciModel.persistence.CIUploadResult;
+import com.qcloud.cos.model.ciModel.persistence.ImageInfo;
 import com.qcloud.cos.model.ciModel.persistence.PicOperations;
 import com.qcloud.cos.transfer.TransferManager;
 import com.qcloud.cos.transfer.TransferManagerConfiguration;
@@ -17,8 +21,11 @@ import org.springframework.stereotype.Component;
 import javax.annotation.Resource;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 
 @Slf4j
@@ -77,7 +84,7 @@ public class CosManager {
         List<PicOperations.Rule> ruleList = new LinkedList<>();
         PicOperations.Rule formatRule = new PicOperations.Rule();
         formatRule.setBucket(cosClientConfig.getBucket());
-        formatRule.setFileId(FileUtil.mainName(key)+".webp");
+        formatRule.setFileId(FileUtil.mainName(key) + ".webp");
         formatRule.setRule("imageMogr2/format/webp");
         ruleList.add(formatRule);
 
@@ -191,6 +198,78 @@ public class CosManager {
      */
     public void deleteObject(String key) throws CosClientException {
         cosClient.deleteObject(cosClientConfig.getBucket(), key);
+    }
+
+    /**
+     * 获取桶里的对象列表
+     *
+     * @return
+     */
+    public List<COSObjectSummary> listObjectSummaries() {
+
+        ListObjectsRequest listObjectsRequest = new ListObjectsRequest();
+        // 设置 bucket 名称
+        listObjectsRequest.setBucketName(cosClientConfig.getBucket());
+        // 设置列出的对象名以 prefix 为前缀
+        listObjectsRequest.setPrefix("");
+        // 设置最大列出多少个对象, 一次 listobject 最大支持1000
+        listObjectsRequest.setMaxKeys(1000);
+
+        // 保存列出的结果
+        ObjectListing objectListing = null;
+
+        try {
+            objectListing = cosClient.listObjects(listObjectsRequest);
+        } catch (CosServiceException e) {
+            e.printStackTrace();
+        } catch (CosClientException e) {
+            e.printStackTrace();
+        }
+
+        // object summary 表示此次列出的对象列表
+        List<COSObjectSummary> cosObjectSummaries = objectListing.getObjectSummaries();
+
+
+        //if (objectListing.isTruncated()) {
+        //    // 表示还没有列完，被截断了
+        //
+        //    // 下一次开始的位置
+        //    String nextMarker = objectListing.getNextMarker();
+        //}
+
+        return cosObjectSummaries;
+    }
+
+    /**
+     * 查询桶里所有图片的基础信息，包括平均色。
+     */
+    public Map<String, ImageInfo> listObjectImageInfo() {
+        List<COSObjectSummary> cosObjectSummaries = this.listObjectSummaries();
+        Map<String, ImageInfo> result = new HashMap<>();
+        for (COSObjectSummary cosObjectSummary : cosObjectSummaries) {
+            String key = cosObjectSummary.getKey();
+            try {
+                ImageProcessRequest imageProcessRequest =
+                        new ImageProcessRequest(cosClientConfig.getBucket(), key);
+                PicOperations picOperations = new PicOperations();
+                picOperations.setIsPicInfo(1);
+                picOperations.setRules(Collections.emptyList());
+                imageProcessRequest.setPicOperations(picOperations);
+
+                CIUploadResult ciUploadResult = cosClient.processImage(imageProcessRequest);
+                if (ciUploadResult != null && ciUploadResult.getOriginalInfo() != null) {
+                    ImageInfo imageInfo = ciUploadResult.getOriginalInfo().getImageInfo();
+                    if (imageInfo != null && StrUtil.isNotBlank(imageInfo.getAve())) {
+                        result.put(key, imageInfo);
+                    }
+                }
+            } catch (CosServiceException e) {
+                log.error("查询图片基础信息失败, key = {}", key, e);
+            } catch (CosClientException e) {
+                log.error("查询图片基础信息失败, key = {}", key, e);
+            }
+        }
+        return result;
     }
 
 }

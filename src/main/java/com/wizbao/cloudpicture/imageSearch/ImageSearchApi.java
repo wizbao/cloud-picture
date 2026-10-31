@@ -42,6 +42,7 @@ public class ImageSearchApi {
      * @return 相似图片列表
      */
     public List<ImageSearchResult> searchPictureByPicture(String imageSearchUrl) {
+        log.info("以图搜图开始, imageSearchUrl={}", imageSearchUrl);
         ThrowUtils.throwIf(StrUtil.isBlank(imageSearchUrl), ErrorCode.PARAMS_ERROR, "图片地址不能为空");
         ThrowUtils.throwIf(!StrUtil.startWithAny(imageSearchUrl, "http://", "https://"),
                 ErrorCode.PARAMS_ERROR, "图片地址不合法");
@@ -52,7 +53,7 @@ public class ImageSearchApi {
                 .form("engine", ENGINE)
                 .form("image_url", imageSearchUrl)
                 .form("api_key", apiKey)
-                .form("count",20) // 每页数量
+                .form("count", 20) // 每页数量
                 .timeout(20000)
                 .execute()) {
             body = response.body();
@@ -67,6 +68,7 @@ public class ImageSearchApi {
             throw new BusinessException(ErrorCode.OPERATION_ERROR, "以图搜图失败");
         }
         List<ImageSearchResult> imageSearchResult = parseImageSearchResult(body);
+        log.info("以图搜图结束,  result={}", imageSearchResult);
         return imageSearchResult;
     }
 
@@ -77,7 +79,7 @@ public class ImageSearchApi {
      * @param body SerpAPI JSON 响应
      * @return 相似图片列表
      */
-     List<ImageSearchResult> parseImageSearchResult(String body) {
+    List<ImageSearchResult> parseImageSearchResult(String body) {
         ThrowUtils.throwIf(!JSONUtil.isTypeJSONObject(body), ErrorCode.OPERATION_ERROR, "以图搜图返回异常");
         JSONObject root = JSONUtil.parseObj(body);
         String error = root.getStr("error");

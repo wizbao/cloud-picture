@@ -13,6 +13,9 @@ import com.wizbao.cloudpicture.constant.UserConstant;
 import com.wizbao.cloudpicture.exception.BusinessException;
 import com.wizbao.cloudpicture.exception.ErrorCode;
 import com.wizbao.cloudpicture.exception.ThrowUtils;
+import com.wizbao.cloudpicture.imageSearch.ImageSearchApi;
+import com.wizbao.cloudpicture.imageSearch.model.ImageSearchResult;
+import com.wizbao.cloudpicture.imageSearch.model.SearchPictureByPictureRequest;
 import com.wizbao.cloudpicture.model.dto.picture.*;
 import com.wizbao.cloudpicture.model.dto.space.SpaceLevel;
 import com.wizbao.cloudpicture.model.entity.Picture;
@@ -59,6 +62,8 @@ public class PictureController {
     private String applicationName;
     @Resource
     private SpaceService spaceService;
+    @Resource
+    private ImageSearchApi imageSearchApi;
 
     // 构建本地缓存Map
     private final Cache<String, String> LOCAL_CACHE =
@@ -354,6 +359,20 @@ public class PictureController {
         User loginUser = userService.getLoginUser(request);
         List<PictureVO> result = pictureService.searchPictureByColor(spaceId, picColor, loginUser);
         return ResultUtils.success(result);
+    }
+
+    /**
+     * 以图搜图
+     */
+    @PostMapping("/search/picture")
+    public BaseResponse<List<ImageSearchResult>> searchPictureByPicture(@RequestBody SearchPictureByPictureRequest searchPictureByPictureRequest) {
+        ThrowUtils.throwIf(searchPictureByPictureRequest == null, ErrorCode.PARAMS_ERROR);
+        Long pictureId = searchPictureByPictureRequest.getPictureId();
+        ThrowUtils.throwIf(pictureId == null || pictureId <= 0, ErrorCode.PARAMS_ERROR);
+        Picture oldPicture = pictureService.getById(pictureId);
+        ThrowUtils.throwIf(oldPicture == null, ErrorCode.NOT_FOUND_ERROR);
+        List<ImageSearchResult> resultList = imageSearchApi.searchPictureByPicture(oldPicture.getUrl());
+        return ResultUtils.success(resultList);
     }
 
 
