@@ -5,9 +5,9 @@ import java.awt.*;
 /**
  * 工具类：计算颜色相似度
  */
-public class ColorSimilarUtils {
+public class ColorSimilarUtil {
 
-    private ColorSimilarUtils() {
+    private ColorSimilarUtil() {
         // 工具类不需要实例化
     }
 

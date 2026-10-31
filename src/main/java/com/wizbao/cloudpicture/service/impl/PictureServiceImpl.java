@@ -27,7 +27,8 @@ import com.wizbao.cloudpicture.service.SpaceService;
 import com.wizbao.cloudpicture.service.UserService;
 import com.wizbao.cloudpicture.upload.PictureUploadFactory;
 import com.wizbao.cloudpicture.upload.PictureUploadTemplate;
-import com.wizbao.cloudpicture.utils.ColorSimilarUtils;
+import com.wizbao.cloudpicture.utils.ColorSimilarUtil;
+import com.wizbao.cloudpicture.utils.CompletableFutureUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -37,6 +38,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.annotation.Resource;
@@ -642,7 +644,7 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture>
                     }
                     Color pictureColor = Color.decode(hexColor);
                     // 越大越相似
-                    return -ColorSimilarUtils.calculateSimilarity(targetColor, pictureColor);
+                    return -ColorSimilarUtil.calculateSimilarity(targetColor, pictureColor);
                 }))
                 // 取前 12 个
                 .limit(12)
@@ -653,6 +655,125 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture>
                 .map(PictureVO::objToVo)
                 .collect(Collectors.toList());
     }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public void editPictureByBatch(PictureEditByBatchRequest pictureEditByBatchRequest, User loginUser) {
+        List<Long> pictureIdList = pictureEditByBatchRequest.getPictureIdList();
+        Long spaceId = pictureEditByBatchRequest.getSpaceId();
+        String category = pictureEditByBatchRequest.getCategory();
+        List<String> tags = pictureEditByBatchRequest.getTags();
+        String nameRule = pictureEditByBatchRequest.getNameRule();
+
+        // 1. 校验参数
+        ThrowUtils.throwIf(spaceId == null || CollUtil.isEmpty(pictureIdList), ErrorCode.PARAMS_ERROR);
+        ThrowUtils.throwIf(loginUser == null, ErrorCode.NO_AUTH_ERROR);
+        // 2. 校验空间权限
+        Space space = spaceService.getById(spaceId);
+        ThrowUtils.throwIf(space == null, ErrorCode.NOT_FOUND_ERROR, "空间不存在");
+        if (!loginUser.getId().equals(space.getUserId())) {
+            throw new BusinessException(ErrorCode.NO_AUTH_ERROR, "没有空间访问权限");
+        }
+
+        // 3. 查询指定图片，仅选择需要的字段
+        List<Picture> pictureList = this.lambdaQuery()
+                .select(Picture::getId, Picture::getSpaceId)
+                .eq(Picture::getSpaceId, spaceId)
+                .in(Picture::getId, pictureIdList)
+                .list();
+
+        if (pictureList.isEmpty()) {
+            return;
+        }
+        // 4. 更新分类和标签
+        pictureList.forEach(picture -> {
+            if (StrUtil.isNotBlank(category)) {
+                picture.setCategory(category);
+            }
+            if (CollUtil.isNotEmpty(tags)) {
+                picture.setTags(JSONUtil.toJsonStr(tags));
+            }
+        });
+        // 批量重命名
+        fillPictureWithNameRule(pictureList, nameRule);
+
+        // 5. 批量更新
+        boolean result = this.updateBatchById(pictureList);
+        ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void editPictureByBatchMultiThread(PictureEditByBatchRequest pictureEditByBatchRequest, User loginUser) {
+        List<Long> pictureIdList = pictureEditByBatchRequest.getPictureIdList();
+        Long spaceId = pictureEditByBatchRequest.getSpaceId();
+        String category = pictureEditByBatchRequest.getCategory();
+        List<String> tags = pictureEditByBatchRequest.getTags();
+
+        // 1. 校验参数
+        ThrowUtils.throwIf(spaceId == null || CollUtil.isEmpty(pictureIdList), ErrorCode.PARAMS_ERROR);
+        ThrowUtils.throwIf(loginUser == null, ErrorCode.NO_AUTH_ERROR);
+        // 2. 校验空间权限
+        Space space = spaceService.getById(spaceId);
+        ThrowUtils.throwIf(space == null, ErrorCode.NOT_FOUND_ERROR, "空间不存在");
+        if (!loginUser.getId().equals(space.getUserId())) {
+            throw new BusinessException(ErrorCode.NO_AUTH_ERROR, "没有空间访问权限");
+        }
+
+        // 3. 查询指定图片，仅选择需要的字段
+        List<Picture> pictureList = this.lambdaQuery()
+                .select(Picture::getId, Picture::getSpaceId)
+                .eq(Picture::getSpaceId, spaceId)
+                .in(Picture::getId, pictureIdList)
+                .list();
+
+        if (pictureList.isEmpty()) {
+            return;
+        }
+
+        List<List<Picture>> picBatch = CollUtil.split(pictureList, 200);
+
+        CompletableFutureUtil.execCompletableFutureList(pictures -> {
+            // 4. 更新分类和标签
+            pictures.forEach(picture -> {
+                if (StrUtil.isNotBlank(category)) {
+                    picture.setCategory(category);
+                }
+                if (CollUtil.isNotEmpty(tags)) {
+                    picture.setTags(JSONUtil.toJsonStr(tags));
+                }
+            });
+
+            // 5. 批量更新
+            boolean result = this.updateBatchById(pictures);
+            ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR);
+            return result;
+        }, picBatch);
+
+    }
+
+    /**
+     * nameRule 格式：图片{序号}
+     *
+     * @param pictureList
+     * @param nameRule
+     */
+    private void fillPictureWithNameRule(List<Picture> pictureList, String nameRule) {
+        if (CollUtil.isEmpty(pictureList) || StrUtil.isBlank(nameRule)) {
+            return;
+        }
+        long count = 1;
+        try {
+            for (Picture picture : pictureList) {
+                String pictureName = nameRule.replaceAll("\\{序号}", String.valueOf(count++));
+                picture.setName(pictureName);
+            }
+        } catch (Exception e) {
+            log.error("名称解析错误", e);
+            throw new BusinessException(ErrorCode.OPERATION_ERROR, "名称解析错误");
+        }
+    }
+
 
 }
 

@@ -8,7 +8,7 @@ import com.wizbao.cloudpicture.model.entity.Picture;
 import com.wizbao.cloudpicture.model.entity.User;
 import com.wizbao.cloudpicture.model.vo.PictureVO;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.web.multipart.MultipartFile;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -105,4 +105,10 @@ public interface PictureService extends IService<Picture> {
     List<Picture> listPictureBySpaceId(Long spaceId);
 
     List<PictureVO> searchPictureByColor(Long spaceId, String picColor, User loginUser);
+
+    @Transactional(rollbackFor = Exception.class)
+    void editPictureByBatch(PictureEditByBatchRequest pictureEditByBatchRequest, User loginUser);
+
+    @Transactional(rollbackFor = Exception.class)
+    void editPictureByBatchMultiThread(PictureEditByBatchRequest pictureEditByBatchRequest, User loginUser);
 }
