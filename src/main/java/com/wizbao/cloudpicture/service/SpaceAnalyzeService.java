@@ -3,6 +3,7 @@ package com.wizbao.cloudpicture.service;
 import com.wizbao.cloudpicture.model.dto.space.analyze.*;
 import com.wizbao.cloudpicture.model.entity.User;
 import com.wizbao.cloudpicture.model.vo.SpaceVO;
+import com.wizbao.cloudpicture.model.vo.space.analyze.*;
 
 import java.util.List;
 

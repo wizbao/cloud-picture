@@ -7,6 +7,7 @@ import com.wizbao.cloudpicture.exception.ThrowUtils;
 import com.wizbao.cloudpicture.model.dto.space.analyze.*;
 import com.wizbao.cloudpicture.model.entity.User;
 import com.wizbao.cloudpicture.model.vo.SpaceVO;
+import com.wizbao.cloudpicture.model.vo.space.analyze.*;
 import com.wizbao.cloudpicture.service.SpaceAnalyzeService;
 import com.wizbao.cloudpicture.service.UserService;
 import io.swagger.annotations.Api;

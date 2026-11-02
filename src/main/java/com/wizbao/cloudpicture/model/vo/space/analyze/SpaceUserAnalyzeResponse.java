@@ -1,4 +1,4 @@
-package com.wizbao.cloudpicture.model.dto.space.analyze;
+package com.wizbao.cloudpicture.model.vo.space.analyze;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,15 +9,15 @@ import java.io.Serializable;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class SpaceTagAnalyzeResponse implements Serializable {
+public class SpaceUserAnalyzeResponse implements Serializable {
 
     /**
-     * 标签名称
+     * 时间区间
      */
-    private String tag;
+    private String period;
 
     /**
-     * 使用次数
+     * 上传数量
      */
     private Long count;
 

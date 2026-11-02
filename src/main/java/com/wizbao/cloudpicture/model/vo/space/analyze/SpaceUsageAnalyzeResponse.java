@@ -1,4 +1,4 @@
-package com.wizbao.cloudpicture.model.dto.space.analyze;
+package com.wizbao.cloudpicture.model.vo.space.analyze;
 
 import lombok.Data;
 

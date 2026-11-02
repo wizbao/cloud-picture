@@ -1,4 +1,4 @@
-package com.wizbao.cloudpicture.model.dto.space.analyze;
+package com.wizbao.cloudpicture.model.vo.space.analyze;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,15 +9,15 @@ import java.io.Serializable;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class SpaceUserAnalyzeResponse implements Serializable {
+public class SpaceSizeAnalyzeResponse implements Serializable {
 
     /**
-     * 时间区间
+     * 图片大小范围
      */
-    private String period;
+    private String sizeRange;
 
     /**
-     * 上传数量
+     * 图片数量
      */
     private Long count;
 
