@@ -7,7 +7,7 @@ import com.wizbao.cloudpicture.model.dto.space.SpaceAddRequest;
 import com.wizbao.cloudpicture.model.dto.space.SpaceQueryRequest;
 import com.wizbao.cloudpicture.model.entity.Space;
 import com.wizbao.cloudpicture.model.entity.User;
-import com.wizbao.cloudpicture.model.vo.SpaceVO;
+import com.wizbao.cloudpicture.model.vo.space.SpaceVO;
 
 import javax.servlet.http.HttpServletRequest;
 

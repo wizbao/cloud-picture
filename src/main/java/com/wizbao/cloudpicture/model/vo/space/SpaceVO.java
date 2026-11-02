@@ -1,6 +1,7 @@
-package com.wizbao.cloudpicture.model.vo;
+package com.wizbao.cloudpicture.model.vo.space;
 
 import com.wizbao.cloudpicture.model.entity.Space;
+import com.wizbao.cloudpicture.model.vo.UserVO;
 import lombok.Data;
 import org.springframework.beans.BeanUtils;
 

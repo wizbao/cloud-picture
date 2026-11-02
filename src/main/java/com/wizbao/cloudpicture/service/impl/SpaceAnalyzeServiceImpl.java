@@ -11,7 +11,7 @@ import com.wizbao.cloudpicture.model.dto.space.analyze.*;
 import com.wizbao.cloudpicture.model.entity.Picture;
 import com.wizbao.cloudpicture.model.entity.Space;
 import com.wizbao.cloudpicture.model.entity.User;
-import com.wizbao.cloudpicture.model.vo.SpaceVO;
+import com.wizbao.cloudpicture.model.vo.space.SpaceVO;
 import com.wizbao.cloudpicture.model.vo.space.analyze.*;
 import com.wizbao.cloudpicture.service.PictureService;
 import com.wizbao.cloudpicture.service.SpaceAnalyzeService;

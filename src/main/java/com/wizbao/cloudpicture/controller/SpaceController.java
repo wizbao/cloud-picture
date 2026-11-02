@@ -15,7 +15,7 @@ import com.wizbao.cloudpicture.model.dto.space.SpaceQueryRequest;
 import com.wizbao.cloudpicture.model.dto.space.SpaceUpdateRequest;
 import com.wizbao.cloudpicture.model.entity.Space;
 import com.wizbao.cloudpicture.model.entity.User;
-import com.wizbao.cloudpicture.model.vo.SpaceVO;
+import com.wizbao.cloudpicture.model.vo.space.SpaceVO;
 import com.wizbao.cloudpicture.service.SpaceService;
 import com.wizbao.cloudpicture.service.UserService;
 import io.swagger.annotations.Api;
