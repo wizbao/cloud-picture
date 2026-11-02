@@ -163,9 +163,7 @@ public class SpaceServiceImpl extends ServiceImpl<SpaceMapper, Space>
         Space oldSpace = this.getById(id);
         ThrowUtils.throwIf(oldSpace == null, ErrorCode.NOT_FOUND_ERROR);
         // 校验权限
-        if (!oldSpace.getUserId().equals(loginUser.getId()) && !userService.isAdmin(loginUser)) {
-            throw new BusinessException(ErrorCode.NO_AUTH_ERROR);
-        }
+        this.checkSpaceAuth(loginUser, oldSpace);
         // 操作数据库
         boolean result = this.removeById(id);
         ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR);
@@ -220,5 +218,13 @@ public class SpaceServiceImpl extends ServiceImpl<SpaceMapper, Space>
         });
         spaceVOPage.setRecords(spaceVOList);
         return spaceVOPage;
+    }
+
+    @Override
+    public void checkSpaceAuth(User loginUser, Space space) {
+        // 仅本人或管理员许可
+        if (!space.getUserId().equals(loginUser.getId()) && !userService.isAdmin(loginUser)) {
+            throw new BusinessException(ErrorCode.NO_AUTH_ERROR);
+        }
     }
 }

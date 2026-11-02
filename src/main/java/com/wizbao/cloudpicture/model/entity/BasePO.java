@@ -3,10 +3,11 @@ package com.wizbao.cloudpicture.model.entity;
 import com.baomidou.mybatisplus.annotation.TableLogic;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Data
-public class BasePO {
+public class BasePO implements Serializable {
     /**
      * 创建时间
      */
@@ -22,4 +23,6 @@ public class BasePO {
      */
     @TableLogic
     private Integer isDelete;
+
+    private static final long serialVersionUID = 1L;
 }
