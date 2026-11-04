@@ -9,6 +9,7 @@ import com.wizbao.cloudpicture.annotation.AuthCheck;
 import com.wizbao.cloudpicture.common.BaseResponse;
 import com.wizbao.cloudpicture.common.DeleteRequest;
 import com.wizbao.cloudpicture.common.ResultUtils;
+import com.wizbao.cloudpicture.constant.SpaceUserPermissionConstant;
 import com.wizbao.cloudpicture.constant.UserConstant;
 import com.wizbao.cloudpicture.exception.BusinessException;
 import com.wizbao.cloudpicture.exception.ErrorCode;
@@ -16,6 +17,9 @@ import com.wizbao.cloudpicture.exception.ThrowUtils;
 import com.wizbao.cloudpicture.imageSearch.ImageSearchApi;
 import com.wizbao.cloudpicture.imageSearch.model.ImageSearchResult;
 import com.wizbao.cloudpicture.imageSearch.model.SearchPictureByPictureRequest;
+import com.wizbao.cloudpicture.manager.auth.SpaceUserAuthManager;
+import com.wizbao.cloudpicture.manager.auth.StpKit;
+import com.wizbao.cloudpicture.manager.auth.annotation.SaSpaceCheckPermission;
 import com.wizbao.cloudpicture.model.dto.picture.*;
 import com.wizbao.cloudpicture.model.dto.space.SpaceLevel;
 import com.wizbao.cloudpicture.model.entity.Picture;
@@ -64,6 +68,8 @@ public class PictureController {
     private SpaceService spaceService;
     @Resource
     private ImageSearchApi imageSearchApi;
+    @Resource
+    private SpaceUserAuthManager spaceUserAuthManager;
 
     // 构建本地缓存Map
     private final Cache<String, String> LOCAL_CACHE =
@@ -78,6 +84,7 @@ public class PictureController {
      */
     @PostMapping("/upload")
     @ApiOperation(value = "上传图片（可重新上传）")
+    @SaSpaceCheckPermission(value = SpaceUserPermissionConstant.PICTURE_UPLOAD)
     public BaseResponse<PictureVO> uploadPicture(
             @ApiParam("图片文件") @RequestPart("file") MultipartFile multipartFile,
             PictureUploadRequest pictureUploadRequest,
@@ -165,22 +172,29 @@ public class PictureController {
      */
     @GetMapping("/get/vo")
     @ApiOperation(value = "根据 id 获取图片（封装类）")
-    public BaseResponse<PictureVO> getPictureVOById(@ApiParam("图片 id") long id, HttpServletRequest request) {
+    public BaseResponse<PictureVO> getPictureVOById(long id, HttpServletRequest request) {
         ThrowUtils.throwIf(id <= 0, ErrorCode.PARAMS_ERROR);
         // 查询数据库
         Picture picture = pictureService.getById(id);
         ThrowUtils.throwIf(picture == null, ErrorCode.NOT_FOUND_ERROR);
-
-        // 空间权限校验
+        // 空间的图片，需要校验权限
+        Space space = null;
         Long spaceId = picture.getSpaceId();
         if (spaceId != null) {
-            User loginUser = userService.getLoginUser(request);
-            pictureService.checkPictureAuth(loginUser, picture);
+            boolean hasPermission = StpKit.SPACE.hasPermission(SpaceUserPermissionConstant.PICTURE_VIEW);
+            ThrowUtils.throwIf(!hasPermission, ErrorCode.NO_AUTH_ERROR);
+            space = spaceService.getById(spaceId);
+            ThrowUtils.throwIf(space == null, ErrorCode.NOT_FOUND_ERROR, "空间不存在");
         }
-
+        // 获取权限列表
+        User loginUser = userService.getLoginUser(request);
+        List<String> permissionList = spaceUserAuthManager.getPermissionList(space, loginUser);
+        PictureVO pictureVO = pictureService.getPictureVO(picture, request);
+        pictureVO.setPermissionList(permissionList);
         // 获取封装类
-        return ResultUtils.success(pictureService.getPictureVO(picture, request));
+        return ResultUtils.success(pictureVO);
     }
+
 
     /**
      * 分页获取图片列表（仅管理员可用）

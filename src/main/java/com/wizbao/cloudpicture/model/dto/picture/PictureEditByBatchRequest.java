@@ -1,5 +1,7 @@
 package com.wizbao.cloudpicture.model.dto.picture;
 
+import cn.hutool.json.JSONException;
+import cn.hutool.json.JSONUtil;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -35,4 +37,13 @@ public class PictureEditByBatchRequest implements Serializable {
 
 
     private static final long serialVersionUID = 1L;
+
+    public static void main(String[] args) {
+        try {
+            PictureEditByBatchRequest bean = JSONUtil.toBean("{\"pictureIdList\":[\"HW82792UG7\"]}", PictureEditByBatchRequest.class);
+            System.out.println("bean = " + bean);
+        } catch (JSONException ex) {
+            throw new IllegalArgumentException("任务参数不是合法 JSON", ex);
+        }
+    }
 }
