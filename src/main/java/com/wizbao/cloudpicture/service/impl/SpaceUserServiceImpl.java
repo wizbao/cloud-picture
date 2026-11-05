@@ -22,6 +22,7 @@ import com.wizbao.cloudpicture.service.SpaceService;
 import com.wizbao.cloudpicture.service.SpaceUserService;
 import com.wizbao.cloudpicture.service.UserService;
 import org.springframework.beans.BeanUtils;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -39,6 +40,7 @@ public class SpaceUserServiceImpl extends ServiceImpl<SpaceUserMapper, SpaceUser
     @Resource
     private UserService userService;
     @Resource
+    @Lazy
     private SpaceService spaceService;
 
     @Override
