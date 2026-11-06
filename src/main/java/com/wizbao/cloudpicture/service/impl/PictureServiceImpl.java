@@ -139,6 +139,7 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture>
 
         // 构造要入库的图片信息
         Picture picture = new Picture();
+        spaceId = spaceId == null ? 0L : spaceId;
         picture.setSpaceId(spaceId);
         picture.setUrl(uploadPictureResult.getUrl());
         picture.setThumbnailUrl(uploadPictureResult.getThumbnailUrl());
