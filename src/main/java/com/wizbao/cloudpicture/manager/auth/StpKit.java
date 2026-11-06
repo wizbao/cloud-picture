@@ -11,6 +11,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class StpKit {
 
+    /**
+     * 空间账号体系类型
+     */
     public static final String SPACE_TYPE = "space";
 
     /**

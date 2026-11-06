@@ -14,10 +14,22 @@ public enum SpaceRoleEnum {
     EDITOR("编辑者", "editor"),
     ADMIN("管理员", "admin");
 
+    /**
+     * 空间角色名称
+     */
     private final String text;
 
+    /**
+     * 空间角色值
+     */
     private final String value;
 
+    /**
+     * 构造空间角色
+     *
+     * @param text 空间角色名称
+     * @param value 空间角色值
+     */
     SpaceRoleEnum(String text, String value) {
         this.text = text;
         this.value = value;

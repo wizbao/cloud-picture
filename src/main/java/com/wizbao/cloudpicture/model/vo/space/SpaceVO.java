@@ -88,8 +88,8 @@ public class SpaceVO implements Serializable {
     /**
      * 封装类转对象
      *
-     * @param spaceVO
-     * @return
+     * @param spaceVO 空间封装
+     * @return 空间
      */
     public static Space voToObj(SpaceVO spaceVO) {
         if (spaceVO == null) {
@@ -103,8 +103,8 @@ public class SpaceVO implements Serializable {
     /**
      * 对象转封装类
      *
-     * @param space
-     * @return
+     * @param space 空间
+     * @return 空间封装
      */
     public static SpaceVO objToVo(Space space) {
         if (space == null) {

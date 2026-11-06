@@ -13,6 +13,9 @@ import java.util.function.Function;
  * 异步编排线程工具类
  */
 public class CompletableFutureUtil {
+    /**
+     * 日志
+     */
     private static final Logger logger = LoggerFactory.getLogger(CompletableFutureUtil.class);
 
     /**
@@ -20,9 +23,9 @@ public class CompletableFutureUtil {
      *
      * 收集异步线程的结果,线程耗费不大,使用系统默认的ForkJionPool
      *
-     * @param completableFutures
-     * @param <T>
-     * @return
+     * @param completableFutures 异步任务
+     * @param <T>                结果类型
+     * @return 异步结果列表
      */
     public static <T> List<T> execCompletableFutureList(CompletableFuture<T>[] completableFutures){
         try {
@@ -52,9 +55,9 @@ public class CompletableFutureUtil {
      * @param paramList  执行方法参数
      * <br>执行方法4个参数以上的 封装成传值对象传递
      *
-     * @param <T>
-     * @param <R>
-     * @return
+     * @param <T> 参数类型
+     * @param <R> 结果类型
+     * @return 异步结果列表
      */
     public static <T, R> List<R> execCompletableFutureList(Function<T, R> function, List<T> paramList) {
         CompletableFuture<R>[] execFutures = new CompletableFuture[paramList.size()];
@@ -78,9 +81,10 @@ public class CompletableFutureUtil {
      * @param paramList  执行方法参数
      * <br>执行方法4个参数以上的 封装成传值对象传递
      *
-     * @param <T>
-     * @param <R>
-     * @return
+     * @param threadPoolCapacity 线程池队列容量
+     * @param <T>                参数类型
+     * @param <R>                结果类型
+     * @return 异步结果列表
      */
     public static <T , R> List<R> execCompletableFutureList(Function<T , R> function , List<T> paramList , int threadPoolCapacity){
         CompletableFuture<R>[] execFutures = new CompletableFuture[paramList.size()];

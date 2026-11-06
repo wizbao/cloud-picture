@@ -47,7 +47,11 @@ public class ColorSimilarUtil {
         return calculateSimilarity(color1, color2);
     }
 
-    // 示例代码
+    /**
+     * 颜色相似度计算示例
+     *
+     * @param args 启动参数
+     */
     public static void main(String[] args) {
         // 测试颜色
         Color color1 = Color.decode("0xFF0000");

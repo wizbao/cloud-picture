@@ -45,19 +45,40 @@ import java.util.stream.Collectors;
 public class SpaceServiceImpl extends ServiceImpl<SpaceMapper, Space>
         implements SpaceService {
 
+    /**
+     * 事务模板
+     */
     @Resource
     private TransactionTemplate transactionTemplate;
+    /**
+     * 用户服务
+     */
     @Resource
     private UserService userService;
+    /**
+     * 图片服务
+     */
     @Resource
     @Lazy
     private PictureService pictureService;
+    /**
+     * 空间成员服务
+     */
     @Resource
     private SpaceUserService spaceUserService;
+    /**
+     * 动态分表管理器
+     */
     @Resource
     @Lazy
     private DynamicShardingManager dynamicShardingManager;
 
+    /**
+     * 校验空间
+     *
+     * @param space 空间
+     * @param add 是否为创建操作
+     */
     @Override
     public void validSpace(Space space, boolean add) {
         ThrowUtils.throwIf(space == null, ErrorCode.PARAMS_ERROR);
@@ -88,6 +109,11 @@ public class SpaceServiceImpl extends ServiceImpl<SpaceMapper, Space>
         }
     }
 
+    /**
+     * 按空间级别填充容量限额
+     *
+     * @param space 空间
+     */
     @Override
     public void fillSpaceBySpaceLevel(Space space) {
         // 根据空间级别，自动填充限额
@@ -105,6 +131,13 @@ public class SpaceServiceImpl extends ServiceImpl<SpaceMapper, Space>
     }
 
 
+    /**
+     * 创建空间
+     *
+     * @param spaceAddRequest 创建空间请求
+     * @param loginUser 登录用户
+     * @return 空间 id
+     */
     @Override
     public long addSpace(SpaceAddRequest spaceAddRequest, User loginUser) {
         // 默认值
@@ -170,6 +203,12 @@ public class SpaceServiceImpl extends ServiceImpl<SpaceMapper, Space>
     }
 
 
+    /**
+     * 获取空间查询条件
+     *
+     * @param spaceQueryRequest 空间查询请求
+     * @return 查询条件
+     */
     @Override
     public QueryWrapper<Space> getQueryWrapper(SpaceQueryRequest spaceQueryRequest) {
         QueryWrapper<Space> queryWrapper = new QueryWrapper<>();
@@ -193,6 +232,12 @@ public class SpaceServiceImpl extends ServiceImpl<SpaceMapper, Space>
         return queryWrapper;
     }
 
+    /**
+     * 删除空间及其图片
+     *
+     * @param id 空间 id
+     * @param loginUser 登录用户
+     */
     @Override
     public void deleteSpace(Long id, User loginUser) {
         ThrowUtils.throwIf(id <= 0, ErrorCode.PARAMS_ERROR);
@@ -218,6 +263,13 @@ public class SpaceServiceImpl extends ServiceImpl<SpaceMapper, Space>
 
     }
 
+    /**
+     * 获取空间封装
+     *
+     * @param space 空间
+     * @param request 请求
+     * @return 空间封装
+     */
     @Override
     public SpaceVO getSpaceVO(Space space, HttpServletRequest request) {
         // 对象转封装类
@@ -232,6 +284,13 @@ public class SpaceServiceImpl extends ServiceImpl<SpaceMapper, Space>
         return spaceVO;
     }
 
+    /**
+     * 分页获取空间封装
+     *
+     * @param spacePage 空间分页
+     * @param request 请求
+     * @return 空间封装分页
+     */
     @Override
     public Page<SpaceVO> getSpaceVOPage(Page<Space> spacePage, HttpServletRequest request) {
         List<Space> spaceList = spacePage.getRecords();
@@ -258,6 +317,12 @@ public class SpaceServiceImpl extends ServiceImpl<SpaceMapper, Space>
         return spaceVOPage;
     }
 
+    /**
+     * 校验空间操作权限，仅本人或管理员可操作
+     *
+     * @param loginUser 登录用户
+     * @param space 空间
+     */
     @Override
     public void checkSpaceAuth(User loginUser, Space space) {
         // 仅本人或管理员许可

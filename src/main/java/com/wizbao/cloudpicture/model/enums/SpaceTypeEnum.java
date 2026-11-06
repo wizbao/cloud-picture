@@ -9,10 +9,22 @@ public enum SpaceTypeEnum {
     PRIVATE("私有空间", 0),
     TEAM("团队空间", 1);
 
+    /**
+     * 空间类型名称
+     */
     private final String text;
 
+    /**
+     * 空间类型值
+     */
     private final int value;
 
+    /**
+     * 构造空间类型
+     *
+     * @param text 空间类型名称
+     * @param value 空间类型值
+     */
     SpaceTypeEnum(String text, int value) {
         this.text = text;
         this.value = value;

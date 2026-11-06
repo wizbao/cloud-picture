@@ -56,22 +56,45 @@ import java.util.stream.Collectors;
 @Api(tags = "图片接口")
 public class PictureController {
 
+    /**
+     * 用户服务
+     */
     @Resource
     private UserService userService;
+    /**
+     * 图片服务
+     */
     @Resource
     private PictureService pictureService;
+    /**
+     * Redis 字符串操作模板
+     */
     @Resource
     private StringRedisTemplate stringRedisTemplate;
+    /**
+     * 应用名称
+     */
     @Value("${spring.application.name}")
     private String applicationName;
+    /**
+     * 空间服务
+     */
     @Resource
     private SpaceService spaceService;
+    /**
+     * 以图搜图接口
+     */
     @Resource
     private ImageSearchApi imageSearchApi;
+    /**
+     * 空间成员权限管理器
+     */
     @Resource
     private SpaceUserAuthManager spaceUserAuthManager;
 
-    // 构建本地缓存Map
+    /**
+     * 图片分页本地缓存，写入后 5 分钟过期
+     */
     private final Cache<String, String> LOCAL_CACHE =
             Caffeine.newBuilder().initialCapacity(1024)
                     .maximumSize(10000L)
@@ -175,7 +198,7 @@ public class PictureController {
      */
     @GetMapping("/get/vo")
     @ApiOperation(value = "根据 id 获取图片（封装类）")
-    public BaseResponse<PictureVO> getPictureVOById(long id, HttpServletRequest request) {
+    public BaseResponse<PictureVO> getPictureVOById(@ApiParam("图片 id") long id, HttpServletRequest request) {
         ThrowUtils.throwIf(id <= 0, ErrorCode.PARAMS_ERROR);
         // 查询数据库
         Picture picture = pictureService.getById(id);
@@ -293,7 +316,15 @@ public class PictureController {
         return ResultUtils.success(true);
     }
 
+    /**
+     * 批量抓取并创建图片
+     *
+     * @param pictureUploadByBatchRequest 批量上传请求
+     * @param request 请求
+     * @return 成功创建的图片数
+     */
     @PostMapping("/upload/batch")
+    @ApiOperation(value = "批量抓取并创建图片")
     @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
     public BaseResponse<Integer> uploadPictureByBatch(
             @RequestBody PictureUploadByBatchRequest pictureUploadByBatchRequest,
@@ -306,7 +337,15 @@ public class PictureController {
     }
 
 
+    /**
+     * 分页获取图片列表，优先读取本地和 Redis 缓存
+     *
+     * @param pictureQueryRequest 图片查询请求
+     * @param request 请求
+     * @return 图片封装分页
+     */
     @PostMapping("/list/page/vo/cache")
+    @ApiOperation(value = "分页获取图片列表（缓存）")
     public BaseResponse<Page<PictureVO>> listPictureVOByPageWithCache(@RequestBody PictureQueryRequest pictureQueryRequest,
                                                                       HttpServletRequest request) {
         long current = pictureQueryRequest.getCurrent();
@@ -357,7 +396,13 @@ public class PictureController {
         return ResultUtils.success(pictureVOPage);
     }
 
+    /**
+     * 获取空间级别列表
+     *
+     * @return 空间级别列表
+     */
     @GetMapping("/list/level")
+    @ApiOperation(value = "获取空间级别列表")
     public BaseResponse<List<SpaceLevel>> listSpaceLevel() {
         List<SpaceLevel> spaceLevelList = Arrays.stream(SpaceLevelEnum.values()) // 获取所有枚举
                 .map(spaceLevelEnum -> new SpaceLevel(
@@ -369,7 +414,15 @@ public class PictureController {
         return ResultUtils.success(spaceLevelList);
     }
 
+    /**
+     * 按颜色搜索图片
+     *
+     * @param searchPictureByColorRequest 颜色搜索请求
+     * @param request 请求
+     * @return 相似图片列表
+     */
     @PostMapping("/search/color")
+    @ApiOperation(value = "按颜色搜索图片")
     @SaSpaceCheckPermission(value = SpaceUserPermissionConstant.PICTURE_VIEW)
     public BaseResponse<List<PictureVO>> searchPictureByColor(@RequestBody SearchPictureByColorRequest searchPictureByColorRequest, HttpServletRequest request) {
         ThrowUtils.throwIf(searchPictureByColorRequest == null, ErrorCode.PARAMS_ERROR);
@@ -384,6 +437,7 @@ public class PictureController {
      * 以图搜图
      */
     @PostMapping("/search/picture")
+    @ApiOperation(value = "以图搜图")
     public BaseResponse<List<ImageSearchResult>> searchPictureByPicture(@RequestBody SearchPictureByPictureRequest searchPictureByPictureRequest) {
         ThrowUtils.throwIf(searchPictureByPictureRequest == null, ErrorCode.PARAMS_ERROR);
         Long pictureId = searchPictureByPictureRequest.getPictureId();
@@ -394,7 +448,15 @@ public class PictureController {
         return ResultUtils.success(resultList);
     }
 
+    /**
+     * 批量编辑图片
+     *
+     * @param pictureEditByBatchRequest 批量编辑请求
+     * @param request 请求
+     * @return 是否成功
+     */
     @PostMapping("/edit/batch")
+    @ApiOperation(value = "批量编辑图片")
     @SaSpaceCheckPermission(value = SpaceUserPermissionConstant.PICTURE_EDIT)
     public BaseResponse<Boolean> editPictureByBatch(@RequestBody PictureEditByBatchRequest pictureEditByBatchRequest, HttpServletRequest request) {
         ThrowUtils.throwIf(pictureEditByBatchRequest == null, ErrorCode.PARAMS_ERROR);

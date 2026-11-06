@@ -20,6 +20,11 @@ import java.util.List;
 
 @Service
 public class UrlPictureUpload extends PictureUploadTemplate {
+    /**
+     * 校验图片 URL
+     *
+     * @param inputSource 图片地址
+     */
     @Override  
     protected void validPicture(Object inputSource) {  
         String fileUrl = (String) inputSource;  
@@ -70,6 +75,12 @@ public class UrlPictureUpload extends PictureUploadTemplate {
         }
     }  
   
+    /**
+     * 从 URL 中提取原始文件名
+     *
+     * @param inputSource 图片地址
+     * @return 原始文件名
+     */
     @Override  
     protected String getOriginFilename(Object inputSource) {  
         String fileUrl = (String) inputSource;  
@@ -77,6 +88,12 @@ public class UrlPictureUpload extends PictureUploadTemplate {
         return FileUtil.getName(fileUrl);
     }  
   
+    /**
+     * 下载 URL 对应文件到临时文件
+     *
+     * @param inputSource 图片地址
+     * @param file 临时文件
+     */
     @Override  
     protected void processFile(Object inputSource, File file) throws Exception {
         String fileUrl = (String) inputSource;  
@@ -84,6 +101,11 @@ public class UrlPictureUpload extends PictureUploadTemplate {
         HttpUtil.downloadFile(fileUrl, file);
     }
 
+    /**
+     * 获取上传方式
+     *
+     * @return 上传方式
+     */
     @Override
     protected String getType() {
         return PictureUploadTypeEnum.URL_UPLOAD.getValue();

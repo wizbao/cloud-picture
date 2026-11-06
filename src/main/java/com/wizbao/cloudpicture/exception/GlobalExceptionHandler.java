@@ -36,12 +36,24 @@ public class GlobalExceptionHandler {
         return ResultUtils.error(ErrorCode.SYSTEM_ERROR, "系统错误");
     }
 
+    /**
+     * 处理未登录异常
+     *
+     * @param e 未登录异常
+     * @return 错误响应
+     */
     @ExceptionHandler(NotLoginException.class)
     public BaseResponse<?> notLoginException(NotLoginException e) {
         log.error("NotLoginException", e);
         return ResultUtils.error(ErrorCode.NOT_LOGIN_ERROR, e.getMessage());
     }
 
+    /**
+     * 处理无权限异常
+     *
+     * @param e 无权限异常
+     * @return 错误响应
+     */
     @ExceptionHandler(NotPermissionException.class)
     public BaseResponse<?> notPermissionExceptionHandler(NotPermissionException e) {
         log.error("NotPermissionException", e);

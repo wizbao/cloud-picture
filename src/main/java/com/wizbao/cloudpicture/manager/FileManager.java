@@ -38,9 +38,15 @@ import java.util.List;
 @Slf4j  
 public class FileManager {  
   
+    /**
+     * 对象存储客户端配置
+     */
     @Resource  
     private CosClientConfig cosClientConfig;  
   
+    /**
+     * 对象存储管理器
+     */
     @Resource  
     private CosManager cosManager;
 
@@ -49,7 +55,7 @@ public class FileManager {
      *
      * @param multipartFile    文件
      * @param uploadPathPrefix 上传路径前缀
-     * @return
+     * @return 上传结果
      */
     public UploadPictureResult uploadPicture(MultipartFile multipartFile, String uploadPathPrefix) {
         // 校验图片

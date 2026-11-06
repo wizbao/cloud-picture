@@ -14,6 +14,11 @@ import java.util.List;
 @Service
 public class FilePictureUpload extends PictureUploadTemplate {  
   
+    /**
+     * 校验本地上传文件
+     *
+     * @param inputSource 上传文件
+     */
     @Override  
     protected void validPicture(Object inputSource) {  
         MultipartFile multipartFile = (MultipartFile) inputSource;
@@ -29,18 +34,35 @@ public class FilePictureUpload extends PictureUploadTemplate {
         ThrowUtils.throwIf(!ALLOW_FORMAT_LIST.contains(fileSuffix), ErrorCode.PARAMS_ERROR, "文件类型错误");  
     }  
   
+    /**
+     * 获取本地文件的原始文件名
+     *
+     * @param inputSource 上传文件
+     * @return 原始文件名
+     */
     @Override  
     protected String getOriginFilename(Object inputSource) {  
         MultipartFile multipartFile = (MultipartFile) inputSource;  
         return multipartFile.getOriginalFilename();  
     }  
   
+    /**
+     * 将上传文件写入临时文件
+     *
+     * @param inputSource 上传文件
+     * @param file 临时文件
+     */
     @Override  
     protected void processFile(Object inputSource, File file) throws Exception {
         MultipartFile multipartFile = (MultipartFile) inputSource;  
         multipartFile.transferTo(file);  
     }
 
+    /**
+     * 获取上传方式
+     *
+     * @return 上传方式
+     */
     @Override
     protected String getType() {
         return PictureUploadTypeEnum.FILE_UPLOAD.getValue();

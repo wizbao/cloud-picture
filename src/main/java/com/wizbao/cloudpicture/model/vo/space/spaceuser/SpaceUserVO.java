@@ -57,8 +57,8 @@ public class SpaceUserVO implements Serializable {
     /**
      * 封装类转对象
      *
-     * @param spaceUserVO
-     * @return
+     * @param spaceUserVO 空间成员封装
+     * @return 空间成员
      */
     public static SpaceUser voToObj(SpaceUserVO spaceUserVO) {
         if (spaceUserVO == null) {
@@ -72,8 +72,8 @@ public class SpaceUserVO implements Serializable {
     /**
      * 对象转封装类
      *
-     * @param spaceUser
-     * @return
+     * @param spaceUser 空间成员
+     * @return 空间成员封装
      */
     public static SpaceUserVO objToVo(SpaceUser spaceUser) {
         if (spaceUser == null) {

@@ -8,10 +8,19 @@ import java.io.Serializable;
 @Data
 public class BaseResponse<T> implements Serializable {
 
+    /**
+     * 状态码
+     */
     private int code;
 
+    /**
+     * 数据
+     */
     private T data;
 
+    /**
+     * 提示信息
+     */
     private String message;
 
     /**

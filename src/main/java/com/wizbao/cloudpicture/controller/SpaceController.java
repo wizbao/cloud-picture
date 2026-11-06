@@ -21,6 +21,7 @@ import com.wizbao.cloudpicture.service.SpaceService;
 import com.wizbao.cloudpicture.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
@@ -36,14 +37,30 @@ import java.util.Objects;
 @Api(tags = "空间接口")
 public class SpaceController {
 
+    /**
+     * 空间服务
+     */
     @Resource
     private SpaceService spaceService;
+    /**
+     * 用户服务
+     */
     @Resource
     private UserService userService;
+    /**
+     * 空间成员权限管理器
+     */
     @Resource
     private SpaceUserAuthManager spaceUserAuthManager;
 
+    /**
+     * 更新空间（仅管理员）
+     *
+     * @param spaceUpdateRequest 更新空间请求
+     * @return 是否成功
+     */
     @PostMapping("/update")
+    @ApiOperation(value = "更新空间（仅管理员）")
     @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
     public BaseResponse<Boolean> updateSpace(@RequestBody SpaceUpdateRequest spaceUpdateRequest) {
         if (spaceUpdateRequest == null || spaceUpdateRequest.getId() <= 0) {
@@ -66,7 +83,15 @@ public class SpaceController {
         return ResultUtils.success(true);
     }
 
+    /**
+     * 创建空间
+     *
+     * @param spaceAddRequest 创建空间请求
+     * @param request 请求
+     * @return 是否成功
+     */
     @PostMapping("/add")
+    @ApiOperation(value = "创建空间")
     public BaseResponse<Boolean> addSpace(@RequestBody SpaceAddRequest spaceAddRequest, HttpServletRequest request) {
         if (spaceAddRequest == null || StrUtil.isBlank(spaceAddRequest.getSpaceName()) || Objects.isNull(spaceAddRequest.getSpaceLevel())) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
@@ -125,9 +150,16 @@ public class SpaceController {
         return ResultUtils.success(true);
     }
 
+    /**
+     * 根据 id 获取空间
+     *
+     * @param id 空间 id
+     * @param request 请求
+     * @return 空间封装
+     */
     @GetMapping("/get/vo")
     @ApiOperation(value = "根据 id 获取空间（封装类）")
-    public BaseResponse<SpaceVO> getSpaceVOById(long id, HttpServletRequest request) {
+    public BaseResponse<SpaceVO> getSpaceVOById(@ApiParam("空间 id") long id, HttpServletRequest request) {
         ThrowUtils.throwIf(id <= 0, ErrorCode.PARAMS_ERROR);
         // 查询数据库
         Space space = spaceService.getById(id);

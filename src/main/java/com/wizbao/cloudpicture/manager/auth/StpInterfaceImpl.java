@@ -41,22 +41,39 @@ import static com.wizbao.cloudpicture.constant.UserConstant.USER_LOGIN_STATE;
 @Component    // 保证此类被 SpringBoot 扫描，完成 Sa-Token 的自定义权限验证扩展
 public class StpInterfaceImpl implements StpInterface {
 
-	// 默认是 /api
+	/**
+	 * 应用上下文路径，默认 /api
+	 */
 	@Value("${server.servlet.context-path}")
 	private String contextPath;
 
+	/**
+	 * 用户服务
+	 */
 	@Resource
 	private UserService userService;
 
+	/**
+	 * 空间服务
+	 */
 	@Resource
 	private SpaceService spaceService;
 
+	/**
+	 * 空间成员服务
+	 */
 	@Resource
 	private SpaceUserService spaceUserService;
 
+	/**
+	 * 图片服务
+	 */
 	@Resource
 	private PictureService pictureService;
 
+	/**
+	 * 空间成员权限管理器
+	 */
 	@Resource
 	private SpaceUserAuthManager spaceUserAuthManager;
 
@@ -210,8 +227,8 @@ public class StpInterfaceImpl implements StpInterface {
 	/**
 	 * 判断对象的所有字段是否为空
 	 *
-	 * @param object
-	 * @return
+	 * @param object 待判断对象
+	 * @return 是否全部为空
 	 */
 	private boolean isAllFieldsNull(Object object) {
 		if (object == null) {

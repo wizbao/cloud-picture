@@ -37,12 +37,24 @@ import java.util.stream.Collectors;
 public class SpaceUserServiceImpl extends ServiceImpl<SpaceUserMapper, SpaceUser>
         implements SpaceUserService {
 
+    /**
+     * 用户服务
+     */
     @Resource
     private UserService userService;
+    /**
+     * 空间服务
+     */
     @Resource
     @Lazy
     private SpaceService spaceService;
 
+    /**
+     * 添加空间成员
+     *
+     * @param spaceUserAddRequest 添加成员请求
+     * @return 成员记录 id
+     */
     @Override
     public long addSpaceUser(SpaceUserAddRequest spaceUserAddRequest) {
         // 参数校验
@@ -56,6 +68,12 @@ public class SpaceUserServiceImpl extends ServiceImpl<SpaceUserMapper, SpaceUser
         return spaceUser.getId();
     }
 
+    /**
+     * 校验空间成员
+     *
+     * @param spaceUser 空间成员
+     * @param add 是否为创建操作
+     */
     @Override
     public void validSpaceUser(SpaceUser spaceUser, boolean add) {
         ThrowUtils.throwIf(spaceUser == null, ErrorCode.PARAMS_ERROR);
@@ -83,6 +101,12 @@ public class SpaceUserServiceImpl extends ServiceImpl<SpaceUserMapper, SpaceUser
 
     }
 
+    /**
+     * 获取空间成员查询条件
+     *
+     * @param spaceUserQueryRequest 空间成员查询请求
+     * @return 查询条件
+     */
     @Override
     public QueryWrapper<SpaceUser> getQueryWrapper(SpaceUserQueryRequest spaceUserQueryRequest) {
         QueryWrapper<SpaceUser> queryWrapper = new QueryWrapper<>();
@@ -101,6 +125,13 @@ public class SpaceUserServiceImpl extends ServiceImpl<SpaceUserMapper, SpaceUser
         return queryWrapper;
     }
 
+    /**
+     * 获取空间成员封装
+     *
+     * @param spaceUser 空间成员
+     * @param request 请求
+     * @return 空间成员封装
+     */
     @Override
     public SpaceUserVO getSpaceUserVO(SpaceUser spaceUser, HttpServletRequest request) {
         // 对象转封装类
@@ -122,6 +153,12 @@ public class SpaceUserServiceImpl extends ServiceImpl<SpaceUserMapper, SpaceUser
         return spaceUserVO;
     }
 
+    /**
+     * 获取空间成员封装列表
+     *
+     * @param spaceUserList 空间成员列表
+     * @return 空间成员封装列表
+     */
     @Override
     public List<SpaceUserVO> getSpaceUserVOList(List<SpaceUser> spaceUserList) {
         // 判断输入列表是否为空

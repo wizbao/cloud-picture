@@ -12,6 +12,9 @@ import java.util.concurrent.Executors;
 @Configuration
 public class TransferManagerConfig {
 
+    /**
+     * 对象存储客户端
+     */
     @Resource
     private COSClient cosClient;
 

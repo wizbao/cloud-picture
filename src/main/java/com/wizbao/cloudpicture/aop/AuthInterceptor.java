@@ -21,6 +21,9 @@ import javax.servlet.http.HttpServletRequest;
 @Component
 public class AuthInterceptor {
 
+    /**
+     * 用户服务
+     */
     @Resource
     private UserService userService;
 

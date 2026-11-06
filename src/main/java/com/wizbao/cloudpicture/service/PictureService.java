@@ -19,10 +19,10 @@ public interface PictureService extends IService<Picture> {
     /**
      * 上传图片
      *
-     * @param inputSource
-     * @param pictureUploadRequest
-     * @param loginUser
-     * @return
+     * @param inputSource          图片源，可以是文件或图片地址
+     * @param pictureUploadRequest 图片上传请求
+     * @param loginUser            登录用户
+     * @return 图片封装
      */
     PictureVO uploadPicture(Object inputSource, PictureUploadRequest pictureUploadRequest, User loginUser);
 
@@ -62,8 +62,8 @@ public interface PictureService extends IService<Picture> {
     /**
      * 图片审核
      *
-     * @param pictureReviewRequest
-     * @param loginUser
+     * @param pictureReviewRequest 审核请求
+     * @param loginUser            登录用户
      */
     void doPictureReview(PictureReviewRequest pictureReviewRequest, User loginUser);
 
@@ -78,8 +78,8 @@ public interface PictureService extends IService<Picture> {
     /**
      * 批量抓取和创建图片
      *
-     * @param pictureUploadByBatchRequest
-     * @param loginUser
+     * @param pictureUploadByBatchRequest 批量上传请求
+     * @param loginUser                   登录用户
      * @return 成功创建的图片数
      */
     Integer uploadPictureByBatch(
@@ -87,28 +87,71 @@ public interface PictureService extends IService<Picture> {
             User loginUser
     );
 
+    /**
+     * 异步清理不再被引用的图片文件
+     *
+     * @param oldPicture 已删除的图片
+     */
     @Async
     void clearPictureFile(Picture oldPicture);
 
     /**
      * 图片更新和删除的权限校验
      *
-     * @param loginUser
-     * @param picture
+     * @param loginUser 登录用户
+     * @param picture   图片
      */
     void checkPictureAuth(User loginUser, Picture picture);
 
+    /**
+     * 删除图片并释放空间额度
+     *
+     * @param pictureId 图片 id
+     * @param loginUser 登录用户
+     */
     void deletePicture(long pictureId, User loginUser);
 
+    /**
+     * 编辑图片
+     *
+     * @param pictureEditRequest 编辑图片请求
+     * @param loginUser 登录用户
+     */
     void editPicture(PictureEditRequest pictureEditRequest, User loginUser);
 
+    /**
+     * 按空间查询图片
+     *
+     * @param spaceId 空间 id
+     * @return 图片列表
+     */
     List<Picture> listPictureBySpaceId(Long spaceId);
 
+    /**
+     * 按主色调搜索空间内相似图片
+     *
+     * @param spaceId 空间 id
+     * @param picColor 目标颜色
+     * @param loginUser 登录用户
+     * @return 相似图片列表
+     */
     List<PictureVO> searchPictureByColor(Long spaceId, String picColor, User loginUser);
 
+    /**
+     * 批量编辑图片的分类、标签和名称
+     *
+     * @param pictureEditByBatchRequest 批量编辑请求
+     * @param loginUser 登录用户
+     */
     @Transactional(rollbackFor = Exception.class)
     void editPictureByBatch(PictureEditByBatchRequest pictureEditByBatchRequest, User loginUser);
 
+    /**
+     * 多线程批量编辑图片的分类和标签
+     *
+     * @param pictureEditByBatchRequest 批量编辑请求
+     * @param loginUser 登录用户
+     */
     @Transactional(rollbackFor = Exception.class)
     void editPictureByBatchMultiThread(PictureEditByBatchRequest pictureEditByBatchRequest, User loginUser);
 }

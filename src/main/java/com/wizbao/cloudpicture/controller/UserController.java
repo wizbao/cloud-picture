@@ -29,6 +29,9 @@ import java.util.List;
 @Api(tags = "用户接口")
 public class UserController {
 
+    /**
+     * 用户服务
+     */
     @Resource
     private UserService userService;
 
@@ -48,9 +51,10 @@ public class UserController {
 
     /**
      * 用户登录
-     * @param userLoginRequest
-     * @param request
-     * @return
+     *
+     * @param userLoginRequest 登录请求
+     * @param request          请求
+     * @return 脱敏后的登录用户信息
      */
     @PostMapping("/login")
     @ApiOperation(value = "用户登录")
@@ -64,8 +68,9 @@ public class UserController {
 
     /**
      * 获取当前登录用户
-     * @param request
-     * @return
+     *
+     * @param request 请求
+     * @return 脱敏后的登录用户信息
      */
     @GetMapping("/get/login")
     @ApiOperation(value = "获取当前登录用户")
@@ -76,8 +81,9 @@ public class UserController {
 
     /**
      * 用户注销
-     * @param request
-     * @return
+     *
+     * @param request 请求
+     * @return 是否注销成功
      */
     @PostMapping("/logout")
     @ApiOperation(value = "用户注销")

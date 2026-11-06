@@ -9,7 +9,13 @@ public enum PictureReviewStatusEnum {
     PASS("通过", 1),  
     REJECT("拒绝", 2);  
   
+    /**
+     * 审核状态名称
+     */
     private final String text;  
+    /**
+     * 审核状态值
+     */
     private final int value;  
   
     /**

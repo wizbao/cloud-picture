@@ -38,6 +38,11 @@ public class PictureEditByBatchRequest implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * 校验批量编辑请求的 JSON 反序列化
+     *
+     * @param args 启动参数
+     */
     public static void main(String[] args) {
         try {
             PictureEditByBatchRequest bean = JSONUtil.toBean("{\"pictureIdList\":[\"HW82792UG7\"]}", PictureEditByBatchRequest.class);

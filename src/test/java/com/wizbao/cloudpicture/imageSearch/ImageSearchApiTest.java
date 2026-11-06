@@ -22,6 +22,9 @@ import java.util.List;
 @ActiveProfiles("local")
 class ImageSearchApiTest {
 
+    /**
+     * 以图搜图接口
+     */
     @Resource
     private ImageSearchApi imageSearchApi;
 

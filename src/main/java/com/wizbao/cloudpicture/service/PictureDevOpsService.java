@@ -7,6 +7,9 @@ package com.wizbao.cloudpicture.service;
  **/
 public interface PictureDevOpsService {
 
+    /**
+     * 刷新历史图片的主色调
+     */
     void updateAllPicColor();
 
 }

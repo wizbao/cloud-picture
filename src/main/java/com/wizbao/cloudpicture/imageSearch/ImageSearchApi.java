@@ -28,10 +28,19 @@ import java.util.Set;
 @Component
 public class ImageSearchApi {
 
+    /**
+     * SerpAPI 搜索地址
+     */
     private static final String SEARCH_URL = "https://serpapi.com/search.json";
 
+    /**
+     * 以图搜图引擎
+     */
     private static final String ENGINE = "bing_reverse_image";
 
+    /**
+     * SerpAPI 密钥
+     */
     @Value("${serpapi.api-key}")
     private String apiKey;
 
@@ -101,6 +110,13 @@ public class ImageSearchApi {
         return imageSearchResult;
     }
 
+    /**
+     * 追加并按缩略图和来源去重
+     *
+     * @param imageSearchResult 结果列表
+     * @param seen 已收录的唯一键
+     * @param items 待解析条目
+     */
     private void appendImageSearchResult(List<ImageSearchResult> imageSearchResult, Set<String> seen, JSONArray items) {
         if (CollUtil.isEmpty(items)) {
             return;

@@ -55,18 +55,39 @@ import java.util.stream.Collectors;
 public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture>
         implements PictureService {
 
+    /**
+     * 用户服务
+     */
     @Resource
     private UserService userService;
+    /**
+     * 图片上传模板工厂
+     */
     @Resource
     private PictureUploadFactory pictureUploadFactory;
+    /**
+     * 对象存储管理器
+     */
     @Resource
     private CosManager cosManager;
+    /**
+     * 对象存储客户端配置
+     */
     @Resource
     private CosClientConfig cosClientConfig;
+    /**
+     * 空间服务
+     */
     @Resource
     private SpaceService spaceService;
+    /**
+     * 事务模板
+     */
     @Resource
     private TransactionTemplate transactionTemplate;
+    /**
+     * 图片访问域名
+     */
     @Value("${img.access-host}")
     private String imgAccessHost;
 
@@ -416,6 +437,13 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture>
         }
     }
 
+    /**
+     * 批量抓取并创建图片
+     *
+     * @param pictureUploadByBatchRequest 批量上传请求
+     * @param loginUser 登录用户
+     * @return 成功创建的图片数
+     */
     @Override
     public Integer uploadPictureByBatch(PictureUploadByBatchRequest pictureUploadByBatchRequest, User loginUser) {
         String searchText = pictureUploadByBatchRequest.getSearchText();
@@ -479,6 +507,11 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture>
     }
 
 
+    /**
+     * 异步清理不再被引用的图片文件
+     *
+     * @param oldPicture 已删除的图片
+     */
     @Async
     @Override
     public void clearPictureFile(Picture oldPicture) {
@@ -532,6 +565,12 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture>
         return null;
     }
 
+    /**
+     * 校验图片更新和删除权限
+     *
+     * @param loginUser 登录用户
+     * @param picture 图片
+     */
     @Override
     public void checkPictureAuth(User loginUser, Picture picture) {
         Long spaceId = picture.getSpaceId();
@@ -548,6 +587,12 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture>
         }
     }
 
+    /**
+     * 删除图片并释放空间额度
+     *
+     * @param pictureId 图片 id
+     * @param loginUser 登录用户
+     */
     @Override
     public void deletePicture(long pictureId, User loginUser) {
         ThrowUtils.throwIf(pictureId <= 0, ErrorCode.PARAMS_ERROR);
@@ -580,6 +625,12 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture>
         this.clearPictureFile(oldPicture);
     }
 
+    /**
+     * 编辑图片
+     *
+     * @param pictureEditRequest 编辑图片请求
+     * @param loginUser 登录用户
+     */
     @Override
     public void editPicture(PictureEditRequest pictureEditRequest, User loginUser) {
         // 在此处将实体类和 DTO 进行转换
@@ -604,6 +655,12 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture>
         ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR);
     }
 
+    /**
+     * 按空间查询图片
+     *
+     * @param spaceId 空间 id
+     * @return 图片列表
+     */
     @Override
     public List<Picture> listPictureBySpaceId(Long spaceId) {
         if (spaceId == null) {
@@ -612,6 +669,14 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture>
         return this.lambdaQuery().eq(Picture::getSpaceId, spaceId).list();
     }
 
+    /**
+     * 按主色调搜索空间内相似图片
+     *
+     * @param spaceId 空间 id
+     * @param picColor 目标颜色
+     * @param loginUser 登录用户
+     * @return 相似图片列表
+     */
     @Override
     public List<PictureVO> searchPictureByColor(Long spaceId, String picColor, User loginUser) {
         // 1. 校验参数
@@ -657,6 +722,12 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture>
                 .collect(Collectors.toList());
     }
 
+    /**
+     * 批量编辑图片的分类、标签和名称
+     *
+     * @param pictureEditByBatchRequest 批量编辑请求
+     * @param loginUser 登录用户
+     */
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void editPictureByBatch(PictureEditByBatchRequest pictureEditByBatchRequest, User loginUser) {
@@ -703,6 +774,12 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture>
         ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR);
     }
 
+    /**
+     * 多线程批量编辑图片的分类和标签
+     *
+     * @param pictureEditByBatchRequest 批量编辑请求
+     * @param loginUser 登录用户
+     */
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void editPictureByBatchMultiThread(PictureEditByBatchRequest pictureEditByBatchRequest, User loginUser) {
@@ -754,10 +831,10 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture>
     }
 
     /**
-     * nameRule 格式：图片{序号}
+     * 按命名规则批量填充图片名称，格式为图片{序号}
      *
-     * @param pictureList
-     * @param nameRule
+     * @param pictureList 图片列表
+     * @param nameRule    命名规则
      */
     private void fillPictureWithNameRule(List<Picture> pictureList, String nameRule) {
         if (CollUtil.isEmpty(pictureList) || StrUtil.isBlank(nameRule)) {

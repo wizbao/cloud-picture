@@ -9,8 +9,14 @@ public enum UserRoleEnum {
     USER("用户", "user"),
     ADMIN("管理员", "admin");
 
+    /**
+     * 角色名称
+     */
     private final String text;
 
+    /**
+     * 角色值
+     */
     private final String value;
 
     /**

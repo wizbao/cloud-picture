@@ -30,10 +30,19 @@ import java.util.stream.Collectors;
 @Slf4j
 public class SpaceAnalyzeServiceImpl implements SpaceAnalyzeService {
 
+    /**
+     * 用户服务
+     */
     @Resource
     private UserService userService;
+    /**
+     * 空间服务
+     */
     @Resource
     private SpaceService spaceService;
+    /**
+     * 图片服务
+     */
     @Resource
     private PictureService pictureService;
 
@@ -97,6 +106,13 @@ public class SpaceAnalyzeServiceImpl implements SpaceAnalyzeService {
         }
     }
 
+    /**
+     * 按分类统计空间图片
+     *
+     * @param spaceCategoryAnalyzeRequest 分类分析请求
+     * @param loginUser 登录用户
+     * @return 分类分析结果
+     */
     @Override
     public List<SpaceCategoryAnalyzeResponse> getSpaceCategoryAnalyze(SpaceCategoryAnalyzeRequest spaceCategoryAnalyzeRequest, User loginUser) {
         ThrowUtils.throwIf(spaceCategoryAnalyzeRequest == null, ErrorCode.PARAMS_ERROR);
@@ -127,6 +143,13 @@ public class SpaceAnalyzeServiceImpl implements SpaceAnalyzeService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * 按标签统计空间图片
+     *
+     * @param spaceTagAnalyzeRequest 标签分析请求
+     * @param loginUser 登录用户
+     * @return 标签分析结果
+     */
     @Override
     public List<SpaceTagAnalyzeResponse> getSpaceTagAnalyze(SpaceTagAnalyzeRequest spaceTagAnalyzeRequest, User loginUser) {
         ThrowUtils.throwIf(spaceTagAnalyzeRequest == null, ErrorCode.PARAMS_ERROR);
@@ -158,6 +181,13 @@ public class SpaceAnalyzeServiceImpl implements SpaceAnalyzeService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * 按大小分段统计空间图片
+     *
+     * @param spaceSizeAnalyzeRequest 大小分析请求
+     * @param loginUser 登录用户
+     * @return 大小分析结果
+     */
     @Override
     public List<SpaceSizeAnalyzeResponse> getSpaceSizeAnalyze(SpaceSizeAnalyzeRequest spaceSizeAnalyzeRequest, User loginUser) {
         ThrowUtils.throwIf(spaceSizeAnalyzeRequest == null, ErrorCode.PARAMS_ERROR);
@@ -189,6 +219,13 @@ public class SpaceAnalyzeServiceImpl implements SpaceAnalyzeService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * 按时间维度统计用户上传量
+     *
+     * @param spaceUserAnalyzeRequest 用户分析请求
+     * @param loginUser 登录用户
+     * @return 用户分析结果
+     */
     @Override
     public List<SpaceUserAnalyzeResponse> getSpaceUserAnalyze(SpaceUserAnalyzeRequest spaceUserAnalyzeRequest, User loginUser) {
         ThrowUtils.throwIf(spaceUserAnalyzeRequest == null, ErrorCode.PARAMS_ERROR);
@@ -231,6 +268,13 @@ public class SpaceAnalyzeServiceImpl implements SpaceAnalyzeService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * 按占用空间大小获取空间排行
+     *
+     * @param spaceRankAnalyzeRequest 排行分析请求
+     * @param loginUser 登录用户
+     * @return 空间排行
+     */
     @Override
     public List<SpaceVO> getSpaceRankAnalyze(SpaceRankAnalyzeRequest spaceRankAnalyzeRequest, User loginUser) {
         ThrowUtils.throwIf(spaceRankAnalyzeRequest == null, ErrorCode.PARAMS_ERROR);
@@ -249,6 +293,12 @@ public class SpaceAnalyzeServiceImpl implements SpaceAnalyzeService {
     }
 
 
+    /**
+     * 校验空间分析权限
+     *
+     * @param spaceAnalyzeRequest 分析请求
+     * @param loginUser 登录用户
+     */
     private void checkSpaceAnalyzeAuth(SpaceAnalyzeRequest spaceAnalyzeRequest, User loginUser) {
         // 检查权限
         if (spaceAnalyzeRequest.isQueryAll() || spaceAnalyzeRequest.isQueryPublic()) {
@@ -264,6 +314,12 @@ public class SpaceAnalyzeServiceImpl implements SpaceAnalyzeService {
         }
     }
 
+    /**
+     * 按分析范围补充图片查询条件
+     *
+     * @param spaceAnalyzeRequest 分析请求
+     * @param queryWrapper 查询条件
+     */
     private static void fillAnalyzeQueryWrapper(SpaceAnalyzeRequest spaceAnalyzeRequest, QueryWrapper<Picture> queryWrapper) {
         if (spaceAnalyzeRequest.isQueryAll()) {
             return;

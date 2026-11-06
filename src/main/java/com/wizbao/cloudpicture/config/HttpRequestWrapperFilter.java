@@ -16,6 +16,13 @@ import java.io.IOException;
 @Component
 public class HttpRequestWrapperFilter implements Filter {
 
+    /**
+     * 对 JSON 请求包装请求体，使其可重复读取
+     *
+     * @param request 请求
+     * @param response 响应
+     * @param chain 过滤器链
+     */
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws ServletException, IOException {
         if (request instanceof HttpServletRequest) {

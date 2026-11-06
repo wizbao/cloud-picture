@@ -28,23 +28,42 @@ import java.util.stream.Collectors;
 @Slf4j
 public class DynamicShardingManager {
 
+    /**
+     * 数据源
+     */
     @Resource
     private DataSource dataSource;
 
+    /**
+     * 空间服务
+     */
     @Resource
     private SpaceService spaceService;
 
+    /**
+     * 图片逻辑表名
+     */
     private static final String LOGIC_TABLE_NAME = "picture";
 
-    // 配置文件中的spring.shardingsphere.database.name,没有配置的话，默认就是logic_db
+    /**
+     * ShardingSphere 数据库名，未配置时默认为 logic_db
+     */
     private static final String DATABASE_NAME = "logic_db";
 
+    /**
+     * 初始化动态分表配置
+     */
     @PostConstruct
     public void initialize() {
         log.info("初始化动态分表配置...");
         updateShardingTableNodes();
     }
 
+    /**
+     * 为旗舰版团队空间创建图片分表
+     *
+     * @param space 空间
+     */
     public void createSpacePictureTable(Space space) {
         // 动态创建分表
         // 仅为旗舰版团队空间创建分表

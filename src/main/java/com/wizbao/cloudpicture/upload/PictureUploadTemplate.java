@@ -25,12 +25,21 @@ import java.util.List;
 @Slf4j
 public abstract class PictureUploadTemplate {
 
+    /**
+     * 对象存储管理器
+     */
     @Resource
     protected CosManager cosManager;
 
+    /**
+     * 对象存储客户端配置
+     */
     @Resource
     protected CosClientConfig cosClientConfig;
 
+    /**
+     * 图片访问域名
+     */
     @Value("${img.access-host}")
     private String imgAccessPath;
 
@@ -105,7 +114,7 @@ public abstract class PictureUploadTemplate {
     /**
      * 上传方式
      *
-     * @return
+     * @return 上传方式
      */
     protected abstract String getType();
 
@@ -128,6 +137,15 @@ public abstract class PictureUploadTemplate {
         return uploadPictureResult;
     }
 
+    /**
+     * 封装压缩图和缩略图的上传结果
+     *
+     * @param originFilename 原始文件名
+     * @param compressedCiObject 压缩图对象
+     * @param thumbnailCiObject 缩略图对象
+     * @param imageInfo 图片信息
+     * @return 上传结果
+     */
     private UploadPictureResult buildResult(String originFilename, CIObject compressedCiObject, CIObject thumbnailCiObject, ImageInfo imageInfo) {
         UploadPictureResult uploadPictureResult = new UploadPictureResult();
         int picWidth = compressedCiObject.getWidth();

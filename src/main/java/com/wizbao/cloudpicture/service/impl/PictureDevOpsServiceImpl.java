@@ -26,11 +26,20 @@ import java.util.Map;
 @Service
 public class PictureDevOpsServiceImpl implements PictureDevOpsService {
 
+    /**
+     * 对象存储管理器
+     */
     @Resource
     private CosManager cosManager;
+    /**
+     * 图片服务
+     */
     @Resource
     private PictureService pictureService;
 
+    /**
+     * 刷新历史图片的主色调
+     */
     @Override
     public void updateAllPicColor() {
         Map<String, ImageInfo> imageInfoMap = cosManager.listObjectImageInfo();

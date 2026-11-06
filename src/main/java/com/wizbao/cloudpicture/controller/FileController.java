@@ -36,18 +36,28 @@ import java.time.LocalDateTime;
 @Api(tags = "文件接口")
 public class FileController {
 
+    /**
+     * 对象存储管理器
+     */
     @Resource
     private CosManager cosManager;
+    /**
+     * 用户服务
+     */
     @Resource
     private UserService userService;
+    /**
+     * 图片访问域名
+     */
     @Value("${img.access-host}")
     private String imgAccessPath;
 
     /**
      * 文件上传
      *
-     * @param multipartFile
-     * @return
+     * @param multipartFile 上传文件
+     * @param request       请求
+     * @return 文件访问地址
      */
     @PostMapping("/upload")
     @ApiOperation(value = "文件上传")

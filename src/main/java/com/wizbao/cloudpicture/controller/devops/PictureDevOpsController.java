@@ -23,6 +23,9 @@ import javax.annotation.Resource;
 @RequestMapping("/devops/picture")
 public class PictureDevOpsController {
 
+    /**
+     * 图片运维服务
+     */
     @Resource
     private PictureDevOpsService pictureDevOpsService;
 

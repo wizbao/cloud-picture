@@ -32,12 +32,21 @@ import java.util.Map;
 @Component
 public class CosManager {
 
+    /**
+     * 对象存储客户端配置
+     */
     @Resource
     private CosClientConfig cosClientConfig;
 
+    /**
+     * 对象存储客户端
+     */
     @Resource
     private COSClient cosClient;
 
+    /**
+     * 对象存储传输管理器
+     */
     @Resource
     private TransferManager transferManager;
 
@@ -125,6 +134,13 @@ public class CosManager {
         return uploadResult;
     }
 
+    /**
+     * 上传图片并返回图片处理结果
+     *
+     * @param key 对象键
+     * @param file 图片文件
+     * @return 上传结果
+     */
     public PutObjectResult putPictureObject(String key, File file) {
         PutObjectRequest putObjectRequest = new PutObjectRequest(cosClientConfig.getBucket(), key,
                 file);
@@ -169,8 +185,8 @@ public class CosManager {
     /**
      * 下载对象
      *
-     * @param key
-     * @return
+     * @param key 对象键
+     * @return 对象输入流
      */
     public COSObjectInputStream downloadFile(String key) {
 
@@ -203,7 +219,7 @@ public class CosManager {
     /**
      * 获取桶里的对象列表
      *
-     * @return
+     * @return 对象摘要列表
      */
     public List<COSObjectSummary> listObjectSummaries() {
 

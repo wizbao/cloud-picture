@@ -23,12 +23,21 @@ import java.util.List;
 @Component
 public class SpaceUserAuthManager {
 
+    /**
+     * 用户服务
+     */
     @Resource
     private UserService userService;
 
+    /**
+     * 空间成员服务
+     */
     @Resource
     private SpaceUserService spaceUserService;
 
+    /**
+     * 空间用户权限配置
+     */
     public static final SpaceUserAuthConfig SPACE_USER_AUTH_CONFIG;
 
     static {
@@ -39,8 +48,8 @@ public class SpaceUserAuthManager {
     /**
      * 根据角色获取权限列表
      *
-     * @param spaceUserRole
-     * @return
+     * @param spaceUserRole 空间角色
+     * @return 权限列表
      */
     public List<String> getPermissionsByRole(String spaceUserRole) {
         if (StrUtil.isBlank(spaceUserRole)) {
@@ -61,9 +70,9 @@ public class SpaceUserAuthManager {
     /**
      * 获取权限列表
      *
-     * @param space
-     * @param loginUser
-     * @return
+     * @param space     空间
+     * @param loginUser 登录用户
+     * @return 权限列表
      */
     public List<String> getPermissionList(Space space, User loginUser) {
         if (loginUser == null) {

@@ -10,12 +10,24 @@ public enum SpaceLevelEnum {
     PROFESSIONAL("专业版", 1, 1000, 1000L * 1024 * 1024),
     FLAGSHIP("旗舰版", 2, 10000, 10000L * 1024 * 1024);
 
+    /**
+     * 空间级别名称
+     */
     private final String text;
 
+    /**
+     * 空间级别值
+     */
     private final int value;
 
+    /**
+     * 最大图片数量
+     */
     private final long maxCount;
 
+    /**
+     * 最大图片总大小，单位字节
+     */
     private final long maxSize;
 
 
